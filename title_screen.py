@@ -5,26 +5,7 @@ import shutil
 import re
 import time
 from new_game import character_creation
-
-ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
-
-def center_text(text):
-    visible_text = ansi_escape.sub('', text)
-    terminal_width = shutil.get_terminal_size().columns
-    spaces_needed = (terminal_width - len(visible_text)) // 2
-    return ' ' * spaces_needed + text
-
-def animate_title(text, delay=0.1):
-    terminal_width = shutil.get_terminal_size().columns
-    visible_text = ansi_escape.sub('', text)
-    spaces_needed = (terminal_width - len(visible_text)) // 2
-    padding = ' ' * spaces_needed
-
-    for char in text:
-        print(padding + char, end='', flush=True)
-        time.sleep(delay)
-        padding = ''
-    print()
+from text_utils import *
 
 
 def credits_screen():
