@@ -1,5 +1,6 @@
 from colorama import Fore, Style
 from items import Item,Weapon,Potion
+from item_data import *
 
 class Inventory:
     def __init__(self):
@@ -30,7 +31,7 @@ class Inventory:
         if isinstance(item, Weapon):
             print(Fore.YELLOW + player.name + " uses " + item.name + "!" + Style.RESET_ALL)
             print("")
-            item.attack(player, target)
+            item.equip(player)
         elif isinstance(item, Potion):
             print(Fore.YELLOW + player.name + " uses " + item.name + "!" + Style.RESET_ALL)
             item.use(player)
@@ -38,3 +39,98 @@ class Inventory:
             self.items.remove(item)
         elif isinstance(item, Potion) and item.quantity == 0:
             self.items.remove(item)
+    
+def use_non_combat_item(self, player):
+    print(Fore.YELLOW + "--- Inventory ---")
+    print(Fore.CYAN + "-" * 40)
+    
+    if player.weapon:
+        print(Fore.GREEN + "Weapon Equipped: " + player.weapon.name + " | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
+    else:
+        print(Fore.RED + "No weapon equipped.")
+    
+    if len(player.inventory.items) > 0:
+        print(Fore.YELLOW + "Items in your inventory:")
+        for i, item in enumerate(player.inventory.items):
+            print(Fore.GREEN + str(i + 1) + ". " + item.name + " - " + item.description + " | Durability: " + str(item.durability) + "/" + str(item.max_durability))
+    else:
+        print(Fore.RED + "Your inventory is empty.")
+
+    print(Fore.CYAN + "-" * 40)
+    print("b. Back")
+    print("1. Use Item")
+    print("2. Equip Weapon")
+    print("3. Unequip Weapon")
+    
+    while True:
+        choice = input(Fore.YELLOW + "> ").strip().lower()
+        
+        if choice == "b":
+            break
+        
+        if choice == "1":
+            if len(player.inventory.items) > 0:
+                print(Fore.YELLOW + "Choose an item by number to use (or b to go back):")
+                for i, item in enumerate(player.inventory.items):
+                    print(Fore.GREEN + str(i + 1) + ". " + item.name + " - " + item.description)
+                while True:
+                    item_choice = input(Fore.YELLOW + "> ").strip().lower()
+                    if item_choice == 'b':
+                        break
+                    try:
+                        item_choice = int(item_choice) - 1
+                        if 0 <= item_choice < len(player.inventory.items):
+                            item = player.inventory.items[item_choice]
+                            if isinstance(item, Potion):
+                                item.use(player)
+                                print(Fore.GREEN + item.name + " used successfully!")
+                                player.inventory.items.remove(item)
+                            else:
+                                print(Fore.RED + "This item cannot be used here.")
+                            break
+                        else:
+                            print(Fore.RED + "Invalid index. Try again.")
+                    except ValueError:
+                        print(Fore.RED + "Please enter a valid number.")
+            else:
+                print(Fore.RED + "Your inventory is empty.")
+            continue
+        
+        elif choice == "2":
+            if player.weapon:
+                print(Fore.YELLOW + "You already have a weapon equipped: " + player.weapon.name)
+            else:
+                print(Fore.YELLOW + "Choose a weapon to equip (or b to go back):")
+                available_weapons = [item for item in player.inventory.items if isinstance(item, Weapon)]
+                if available_weapons:
+                    for i, weapon in enumerate(available_weapons):
+                        print(Fore.GREEN + str(i + 1) + ". " + weapon.name + " - " + weapon.description)
+                    while True:
+                        weapon_choice = input(Fore.YELLOW + "> ").strip().lower()
+                        if weapon_choice == 'b':
+                            break
+                        try:
+                            weapon_choice = int(weapon_choice) - 1
+                            if 0 <= weapon_choice < len(available_weapons):
+                                player.equip_weapon(available_weapons[weapon_choice])
+                                print(Fore.GREEN + "Equipped " + player.weapon.name)
+                                break
+                            else:
+                                print(Fore.RED + "Invalid index. Try again.")
+                        except ValueError:
+                            print(Fore.RED + "Please enter a valid number.")
+                else:
+                    print(Fore.RED + "No weapons available in your inventory.")
+            continue
+        
+        elif choice == "3":
+            if player.weapon:
+                print(Fore.YELLOW + "Unequipping your weapon: " + player.weapon.name)
+                player.unequip_weapon()
+                print(Fore.GREEN + "Weapon unequipped.")
+            else:
+                print(Fore.RED + "No weapon equipped.")
+            continue
+        
+        else:
+            print(Fore.RED + "Invalid option. Try again.")
