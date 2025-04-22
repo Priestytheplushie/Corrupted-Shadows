@@ -2,8 +2,6 @@ import time
 import random
 import os
 import sys
-import re
-import shutil
 from enemies import *
 from inventory import Inventory
 from items import *
@@ -70,34 +68,49 @@ def enemy_turn(player, enemy):
 def player_turn(player, enemy):
     print(Fore.CYAN + "-" * 40)
     typewriter(Fore.MAGENTA + "Your Turn - Turn " + str(turn))
-    print(Fore.WHITE + f"HP: {player.hp} | Enemy HP: {enemy.hp}")
+    print(Fore.WHITE + "HP: " + str(player.hp) + " | Enemy HP: " + str(enemy.hp))
     print(Fore.CYAN + "-" * 40)
     print("")
+    
     time.sleep(1)
     typewriter(Fore.YELLOW + "What will you do?")
-    time.sleep(0.5)  # Brief pause before the options
+    time.sleep(0.5)  
     print(Fore.GREEN + "1. Attack")
-    # Only show Use Item option if the player has items in their inventory
+    
+    if player.weapon:
+        print(Fore.YELLOW + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
+    else:
+        print(Fore.RED + "You have no weapon equipped.")
+    
     if len(player.inventory.items) > 0:
         print("2. Use Item")
     
     print("3. View Inventory")
     print("4. Check Character Sheet")
+    print("b. Back")
     print(Fore.CYAN + "-" * 40)
+    
     while True:
-        choice = input(Fore.YELLOW + "> ").strip()
+        choice = input(Fore.YELLOW + "> ").strip().lower()
+        
         if choice == "1":
-            player.punch(enemy)
+            if player.weapon is None:
+                player.punch(enemy)
+            else:
+                player.attack(enemy)
             print("")
             break
         elif choice == "2":
             if len(player.inventory.items) > 0:
-                print(Fore.YELLOW + "Choose an item by number to use:")
+                print(Fore.YELLOW + "Choose an item by number to use (or b to go back):")
                 for i, item in enumerate(player.inventory.items):
-                    print(Fore.GREEN + f"{i + 1}. {item.name} - {item.description}")
+                    print(Fore.GREEN + str(i + 1) + ". " + item.name + " - " + item.description + " | Durability: " + str(item.durability) + "/" + str(item.max_durability))
                 while True:
+                    item_choice = input(Fore.YELLOW + "> ").strip().lower()
+                    if item_choice == 'b':
+                        break
                     try:
-                        item_choice = int(input(Fore.YELLOW + "> ")) - 1
+                        item_choice = int(item_choice) - 1
                         if 0 <= item_choice < len(player.inventory.items):
                             player.inventory.use_item(player, item_choice)
                             print("")
@@ -110,26 +123,30 @@ def player_turn(player, enemy):
                         print("")
             else:
                 print(Fore.RED + "Your inventory is empty!")
-                # Prompt the player to select a different action
-                print(Fore.YELLOW + "You can either attack or view your inventory.")
-                continue  # Re-prompt for action
             break
         elif choice == "3":
-            player.inventory.show_inventory()
+            print(Fore.YELLOW + "\n--- INVENTORY ---")
+            print(Fore.CYAN + "-" * 40)
+            if len(player.inventory.items) == 0:
+                print(Fore.RED + "Your inventory is empty.")
+            for i, item in enumerate(player.inventory.items):
+                print(Fore.GREEN + str(i + 1) + ". " + item.name + " - " + item.description)
+                print(Fore.YELLOW + "    Durability: " + str(item.durability) + "/" + str(item.max_durability))
+                print(Fore.CYAN + "-" * 40)
             print("")
         elif choice == "4":
-            show_character_sheet(player,False)
+            show_character_sheet(player, False)
             typewriter(Fore.YELLOW + "What will you do?")
             time.sleep(0.5)  # Brief pause before the options
             print(Fore.GREEN + "1. Attack")
-            # Only show Use Item option if the player has items in their inventory
             if len(player.inventory.items) > 0:
                 print("2. Use Item")
-    
             print("3. View Inventory")
             print("4. Check Character Sheet")
+            print("b. Back")
             print(Fore.CYAN + "-" * 40)
-
+        elif choice == "b":
+            break
         else:
             print(Fore.RED + "Invalid option. Try again.")
 
@@ -170,7 +187,7 @@ def battle(player, enemy):
         print("\n--- Turn " + str(turn) + " ---")
         player_turn(player, enemy)
         if enemy.hp <= 0:
-            battle_conclusion(player,enemy)
+            battle_conclusion(player, enemy)
             del enemy
             break
         enemy_turn(player, enemy)
@@ -178,5 +195,3 @@ def battle(player, enemy):
         time.sleep(3)
         death_screen()
         del enemy
-        
-        
