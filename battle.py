@@ -8,9 +8,9 @@ from enemies import *
 from inventory import Inventory
 from items import *
 from player import Player
-from title_screen import animate_title
+from title import animate_title
 from text_utils import *
-from screens import death_screen
+from screens import death_screen, show_character_sheet
 
 from strings import (
     player_attacks_first_message,
@@ -82,6 +82,7 @@ def player_turn(player, enemy):
         print("2. Use Item")
     
     print("3. View Inventory")
+    print("4. Check Character Sheet")
     print(Fore.CYAN + "-" * 40)
     while True:
         choice = input(Fore.YELLOW + "> ").strip()
@@ -116,6 +117,19 @@ def player_turn(player, enemy):
         elif choice == "3":
             player.inventory.show_inventory()
             print("")
+        elif choice == "4":
+            show_character_sheet(player,False)
+            typewriter(Fore.YELLOW + "What will you do?")
+            time.sleep(0.5)  # Brief pause before the options
+            print(Fore.GREEN + "1. Attack")
+            # Only show Use Item option if the player has items in their inventory
+            if len(player.inventory.items) > 0:
+                print("2. Use Item")
+    
+            print("3. View Inventory")
+            print("4. Check Character Sheet")
+            print(Fore.CYAN + "-" * 40)
+
         else:
             print(Fore.RED + "Invalid option. Try again.")
 

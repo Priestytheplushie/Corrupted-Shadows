@@ -1,5 +1,6 @@
 import random
 from colorama import Fore
+from game_data import *
 
 def calculate_attack(base_strength, weapon_damage):
     strength_variation = random.randint(-2, 2) 
