@@ -7,18 +7,25 @@ import cmd
 import sys
 import textwrap
 from player import Player
-from title_screen import title_screen
-from new_game import character_creation, roll_intellignece
+from title import title_screen
+from new_game import character_creation
 from enemies import *
 from battle import *
+from item_factory import create_item
 
-title_screen() # Display game title
+def main():
+    clear_screen()
 
-# Set stats based on new_game.py
-player_name = character_creation()
-intellignece = roll_intellignece()
+    animate_title(Fore.WHITE + "Chapter 1 - The Curruption")
 
-player = Player(player_name,100,10,5,intellignece,0,1000) # Create Player Class
+    sword = create_item("Iron Sword")
+
+    player.inventory.add_item(sword)
+    
+    time.sleep(3)  # Pause for effect, adjust as needed
+    battle(player, goblin)
+
+player = title_screen()
 goblin = Goblin(5)
 
-battle(player,goblin) # Test Battle
+main()

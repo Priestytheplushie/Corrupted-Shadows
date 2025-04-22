@@ -4,9 +4,8 @@ import math
 from inventory import Inventory
 from items import *
 from attack import calculate_attack
+from item_data import *
 from text_utils import *
-
-# Generic Player Class
 
 class Player:
     def __init__(self, name, hp, strength, speed, intelligence, defense, money, weapon=None):
@@ -25,17 +24,21 @@ class Player:
         self.inventory = Inventory() 
 
     def punch(self, enemy):
-        damage = calculate_attack(self.strength, 0)  # No weapon bonus for punch
+        raw_damage = calculate_attack(self.strength, 0)
+        damage = max(1, raw_damage - enemy.defense)
         enemy.hp -= damage
         print(self.name + " punches " + enemy.name + " for " + str(damage) + " damage!")
+        print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(raw_damage) + " by defense)" + Fore.WHITE)
         print("")
         print(enemy.name + " remaining HP: " + str(enemy.hp))
         print("")
 
     def attack(self, enemy):
-        damage = calculate_attack(self.strength, self.weapon.damage if self.weapon else 0)
+        raw_damage = calculate_attack(self.strength, self.weapon.damage if self.weapon else 0)
+        damage = max(1, raw_damage - enemy.defense)
         enemy.hp -= damage
         print(self.name + " attacks " + enemy.name + " with " + (self.weapon.name if self.weapon else 'bare hands') + " for " + str(damage) + " damage!")
+        print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(raw_damage) + " by defense)" + Fore.WHITE)
         print("")
         print(enemy.name + " remaining HP: " + str(enemy.hp))
         print("")
@@ -46,6 +49,14 @@ class Player:
     
     def use_item(self, index, target=None):
         self.inventory.use_item(self, index, target)
+
+    def equip_weapon(self, weapon):
+        self.weapon = weapon
+        print(self.weapon,"equipped.")
+
+    def unequip_weapon(self):
+        self.weapon = None  
+        print("Weapon unequipped.")
 
     def level_up(self):
         level_thresholds = {
