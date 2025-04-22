@@ -54,7 +54,7 @@ def character_creation():
     hp = random.randint(50, 100)
     strength = random.randint(5, 15)
     speed = random.randint(5, 15)
-    intelligence = random.randint(5, 15)
+    intelligence = random.randint(50, 200)
     defense = 0
     money = 1000
 

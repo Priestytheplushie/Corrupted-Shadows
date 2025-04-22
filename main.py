@@ -11,11 +11,16 @@ from title import title_screen
 from new_game import character_creation
 from enemies import *
 from battle import *
+from item_factory import create_item
 
 def main():
     clear_screen()
 
     animate_title(Fore.WHITE + "Chapter 1 - The Curruption")
+
+    sword = create_item("Iron Sword")
+
+    player.inventory.add_item(sword)
     
     time.sleep(3)  # Pause for effect, adjust as needed
     battle(player, goblin)
