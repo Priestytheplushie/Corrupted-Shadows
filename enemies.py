@@ -4,6 +4,7 @@ import math
 from attack import calculate_attack
 from game_data import *
 import time
+from game_data import difficulty 
 
 class Enemy:
     def __init__(self, name, level, hp, strength, speed, intelligence, defense, weapon=None):
