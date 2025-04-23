@@ -5,6 +5,7 @@ import sys
 from enemies import *
 from inventory import Inventory
 from items import *
+from game_data import *
 from player import Player
 from title import animate_title
 from text_utils import *
@@ -17,16 +18,23 @@ from strings import (
     randomized_intro_messages,
 )
 
-# Global
 turn = 1
 
 def check_level_up(player):
     player.level_up()
 
+def calculate_money(enemy):
+    base_money = 10 
+    level_multiplier = enemy.level * 5
+    difficulty_multiplier = 1 + (difficulty / 100) 
+    random_bonus = random.randint(0, 20)
+    money = (base_money + level_multiplier) * difficulty_multiplier + random_bonus
+    return round(money)
+
 def calculate_xp(enemy):
-    base_xp = 10  # Base XP
-    level_multiplier = enemy.level * 2  # Each level gives additional XP
-    xp = base_xp + level_multiplier  # Add XP based on enemy level
+    base_xp = 10
+    level_multiplier = enemy.level * 2
+    xp = base_xp + level_multiplier
     return xp
 
 def battle_conclusion(player, enemy):
@@ -55,44 +63,59 @@ def battle_conclusion(player, enemy):
     input()
     return result
 
-
 def enemy_turn(player, enemy):
     print(Fore.CYAN + "-" * 40)
     typewriter(Fore.MAGENTA + "Enemy Turn - Turn " + str(turn))
-    print(Fore.WHITE + f"HP: {player.hp} | Enemy HP: {enemy.hp}")
-    print(Fore.CYAN + "-" * 40)
-    print("")
-    time.sleep(1)
-    enemy.choose_action(player)
-
-def player_turn(player, enemy):
-    print(Fore.CYAN + "-" * 40)
-    typewriter(Fore.MAGENTA + "Your Turn - Turn " + str(turn))
     print(Fore.WHITE + "HP: " + str(player.hp) + " | Enemy HP: " + str(enemy.hp))
     print(Fore.CYAN + "-" * 40)
     print("")
+
+    # Process player's status effects (e.g., stagger)
+    player.process_status_effects()
     
-    time.sleep(1)
-    typewriter(Fore.YELLOW + "What will you do?")
-    time.sleep(0.5)  
-    print(Fore.GREEN + "1. Attack")
-    
-    if player.weapon:
-        print(Fore.YELLOW + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
+    # Handle staggered player - Skip turn if staggered
+    if player.is_staggered():
+        print(Fore.YELLOW + player.name + " is staggered and can't act this turn!")
+        time.sleep(1)
     else:
-        print(Fore.RED + "You have no weapon equipped.")
-    
-    if len(player.inventory.items) > 0:
-        print("2. Use Item")
-    
-    print("3. View Inventory")
-    print("4. Check Character Sheet")
-    print("b. Back")
-    print(Fore.CYAN + "-" * 40)
-    
+        enemy.choose_action(player)
+
+def player_turn(player, enemy):
     while True:
+        print(Fore.CYAN + "-" * 40)
+        typewriter(Fore.MAGENTA + "Your Turn - Turn " + str(turn))
+        print(Fore.WHITE + "HP: " + str(player.hp) + " | Enemy HP: " + str(enemy.hp))
+        print(Fore.CYAN + "-" * 40)
+        print("")
+
+        # Process status effects (e.g., stagger)
+        player.process_status_effects()
+
+        # Check if player is staggered and modify their actions accordingly
+        if player.is_staggered():
+            print(Fore.YELLOW + player.name + " is staggered and can’t act normally!")
+            # You may want to skip the action or modify the player's turn choices here
+            time.sleep(1)
+            break
+
+        # If not staggered, show normal turn options
+        typewriter(Fore.YELLOW + "What will you do?")
+        time.sleep(0.5)
+        print(Fore.GREEN + "1. Attack")
+        if isinstance(player.weapon, Weapon):
+            print(Fore.YELLOW + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
+        else:
+            print(Fore.RED + "You have no weapon equipped.")
+        if len(player.inventory.items) > 0:
+            print(Fore.GREEN + "2. Use Item")
+        print(Fore.GREEN + "3. View Inventory")
+        print(Fore.GREEN + "4. Check Character Sheet")
+        print(Fore.GREEN + "5. Identify (Reveal Enemy Stats)")
+        print(Fore.GREEN + "b. End Turn")
+        print(Fore.CYAN + "-" * 40)
+
         choice = input(Fore.YELLOW + "> ").strip().lower()
-        
+
         if choice == "1":
             if player.weapon is None:
                 player.punch(enemy)
@@ -102,10 +125,13 @@ def player_turn(player, enemy):
             break
         elif choice == "2":
             if len(player.inventory.items) > 0:
-                print(Fore.YELLOW + "Choose an item by number to use (or b to go back):")
-                for i, item in enumerate(player.inventory.items):
-                    print(Fore.GREEN + str(i + 1) + ". " + item.name + " - " + item.description + " | Durability: " + str(item.durability) + "/" + str(item.max_durability))
                 while True:
+                    print(Fore.YELLOW + "Choose an item by number to use (or b to go back):")
+                    for i, item in enumerate(player.inventory.items):
+                        item_text = Fore.GREEN + str(i + 1) + ". " + item.name + " - " + item.description
+                        if hasattr(item, "durability") and hasattr(item, "max_durability"):
+                            item_text += Fore.YELLOW + " | Durability: " + str(item.durability) + "/" + str(item.max_durability)
+                        print(item_text)
                     item_choice = input(Fore.YELLOW + "> ").strip().lower()
                     if item_choice == 'b':
                         break
@@ -114,7 +140,7 @@ def player_turn(player, enemy):
                         if 0 <= item_choice < len(player.inventory.items):
                             player.inventory.use_item(player, item_choice)
                             print("")
-                            break
+                            return  # Exit the function and end the player's turn
                         else:
                             print(Fore.RED + "Invalid index. Try again.")
                             print("")
@@ -123,7 +149,6 @@ def player_turn(player, enemy):
                         print("")
             else:
                 print(Fore.RED + "Your inventory is empty!")
-            break
         elif choice == "3":
             print(Fore.YELLOW + "\n--- INVENTORY ---")
             print(Fore.CYAN + "-" * 40)
@@ -131,20 +156,31 @@ def player_turn(player, enemy):
                 print(Fore.RED + "Your inventory is empty.")
             for i, item in enumerate(player.inventory.items):
                 print(Fore.GREEN + str(i + 1) + ". " + item.name + " - " + item.description)
-                print(Fore.YELLOW + "    Durability: " + str(item.durability) + "/" + str(item.max_durability))
+                if hasattr(item, "durability") and hasattr(item, "max_durability"):
+                    print(Fore.YELLOW + "    Durability: " + str(item.durability) + "/" + str(item.max_durability))
                 print(Fore.CYAN + "-" * 40)
             print("")
         elif choice == "4":
             show_character_sheet(player, False)
-            typewriter(Fore.YELLOW + "What will you do?")
-            time.sleep(0.5)  # Brief pause before the options
-            print(Fore.GREEN + "1. Attack")
-            if len(player.inventory.items) > 0:
-                print("2. Use Item")
-            print("3. View Inventory")
-            print("4. Check Character Sheet")
-            print("b. Back")
-            print(Fore.CYAN + "-" * 40)
+        elif choice == "5":
+            print(Fore.MAGENTA + "\nScanning enemy essence..." + Fore.WHITE)
+            time.sleep(1)
+            print(Fore.CYAN + "\n┌" + "─" * 38 + "┐")
+            print(Fore.CYAN + "│ " + Fore.MAGENTA + "ENEMY IDENTIFIED:".ljust(37) + Fore.CYAN + "│")
+            print(Fore.CYAN + "├" + "─" * 38 + "┤")
+            if hasattr(enemy, 'real_name'):
+                print(Fore.CYAN + "│ " + Fore.RED + "Name: " + enemy.real_name.ljust(37) + Fore.CYAN + "│")
+            else:
+                print(Fore.CYAN + "│ " + Fore.RED + "Name: " + enemy.name.ljust(37) + Fore.CYAN + "│")
+            print(Fore.CYAN + "│ " + Fore.YELLOW + "Level: " + str(enemy.level).ljust(37) + Fore.CYAN + "│")
+            print(Fore.CYAN + "│ " + Fore.RED + "HP: " + (str(enemy.hp) + "/" + str(enemy.max_hp)).ljust(37) + Fore.CYAN + "│")
+            print(Fore.CYAN + "│ " + Fore.GREEN + "Strength: " + str(enemy.strength).ljust(37) + Fore.CYAN + "│")
+            print(Fore.CYAN + "│ " + Fore.BLUE + "Speed: " + str(enemy.speed).ljust(37) + Fore.CYAN + "│")
+            print(Fore.CYAN + "│ " + Fore.MAGENTA + "Defense: " + str(enemy.defense).ljust(37) + Fore.CYAN + "│")
+            print(Fore.CYAN + "└" + "─" * 38 + "┘")
+            print("")
+            if hasattr(enemy, "reveal_identity"):
+                enemy.reveal_identity()
         elif choice == "b":
             break
         else:
@@ -157,11 +193,9 @@ def battle(player, enemy):
     typewriter(randomized_intro_messages(player, enemy))
     print("")
     time.sleep(1)
-    # Battle Start Message
     typewriter(Fore.YELLOW + "Battle started!")
     print("")
     time.sleep(1)
-    # Player vs Enemy
     typewriter(Fore.GREEN + player.name + Fore.WHITE + " v.s " + Fore.RED + enemy.name)
     print("")
     time.sleep(1)
@@ -181,17 +215,13 @@ def battle(player, enemy):
             player_turn(player, enemy)
         else:
             enemy_turn(player, enemy)
-    # Battle Loop
     while player.hp > 0 and enemy.hp > 0:
         turn += 1
         print("\n--- Turn " + str(turn) + " ---")
         player_turn(player, enemy)
-        if enemy.hp <= 0:
-            battle_conclusion(player, enemy)
-            del enemy
-            break
-        enemy_turn(player, enemy)
-    if player.hp <= 0:
-        time.sleep(3)
-        death_screen()
-        del enemy
+        if enemy.hp > 0:
+            enemy_turn(player, enemy)
+    if player.hp > 0:
+        battle_conclusion(player, enemy)
+    else:
+        death_screen(player)

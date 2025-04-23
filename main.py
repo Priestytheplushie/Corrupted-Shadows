@@ -1,4 +1,4 @@
-# Priesty's Quest
+# Corrupted Shadows
 
 # Imports
 import time
@@ -12,20 +12,11 @@ from new_game import character_creation
 from enemies import *
 from battle import *
 from item_factory import create_item
-
-def main():
-    clear_screen()
-
-    animate_title(Fore.WHITE + "Chapter 1 - The Curruption")
-
-    sword = create_item("Iron Sword")
-
-    player.inventory.add_item(sword)
-    
-    time.sleep(3)  # Pause for effect, adjust as needed
-    battle(player, goblin)
+from chapter1 import *
 
 player = title_screen()
-goblin = Goblin(5)
 
-main()
+if player:
+    chapter_1(player)
+else:
+    print(Fore.RED+"Character creation failed. Please try again.")

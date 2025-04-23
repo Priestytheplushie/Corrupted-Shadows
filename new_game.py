@@ -4,8 +4,10 @@ import random
 import os
 from screens import show_character_sheet
 from text_utils import clear_screen, typewriter, animate_title, dice_roll_animation
+from game_data import difficulty
 
 def character_creation():
+    global difficulty
     clear_screen()
     animate_title(Fore.MAGENTA + "Character Creation", delay=0.07)
     print("\n")
@@ -51,9 +53,9 @@ def character_creation():
     typewriter(Fore.MAGENTA + "Rolling your stats...", delay=0.04)
     print()
 
-    hp = random.randint(50, 100)
+    hp = random.choice(range(50, 151, 5))
     strength = random.randint(5, 15)
-    speed = random.randint(5, 15)
+    speed = random.randint(0, 15)
     intelligence = random.randint(50, 200)
     defense = 0
     money = 1000
