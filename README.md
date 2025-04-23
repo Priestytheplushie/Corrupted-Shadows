@@ -22,6 +22,6 @@ the recommended difficulty
 players or people who want a challenge
 
 ## Story
-After the **Great War**, the world has been in peace, until a corruption appears
+After the **Great War**, the world has been in peace, until a corruption spreads
 from the shadows, infecting everything in it's wake. It's up to you and you alone
 to lift the curse and cleanse the world of the corruption
