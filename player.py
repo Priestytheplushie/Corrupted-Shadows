@@ -24,14 +24,17 @@ class Player:
         self.inventory = Inventory() 
 
     def punch(self, enemy):
-        raw_damage = calculate_attack(self.strength, 0)
+        strength_variation = random.randint(-1, 1)
+        raw_damage = self.strength + strength_variation
         damage = max(1, raw_damage - enemy.defense)
+    
         enemy.hp -= damage
         print(self.name + " punches " + enemy.name + " for " + str(damage) + " damage!")
         print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(raw_damage) + " by defense)" + Fore.WHITE)
         print("")
         print(enemy.name + " remaining HP: " + str(enemy.hp))
         print("")
+
 
     def attack(self, enemy):
         raw_damage = calculate_attack(self.strength, self.weapon.damage if self.weapon else 0)
@@ -89,3 +92,23 @@ class Player:
             typewriter("")
 
             input(center_text("Press Enter to continue..."))
+
+
+    def apply_status(self,effect,duration):
+        self.status_effects.append({'effect': effect, 'duration': duration})
+        typewriter(self.name + " is affected by " + effect + " for " + str(duration) + " turn(s).")
+
+    def remove_status(self,effect,duration):
+        self.status_effects = [se for se in self.status_effects if se['effect'] != effect]
+    
+    def process_status_effects(self):
+        for effect in self.status_effects:
+            if effect['effect'] == 'stagger':
+                self.speed = max(1, self.speed - 2) 
+                effect['duration'] -= 1
+                if effect['duration'] <= 0:
+                    self.remove_status('stagger')
+                    self.speed += 2 
+
+    def is_staggered(self):
+        return any(se['effect'] == 'stagger' for se in self.status_effects)

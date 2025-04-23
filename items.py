@@ -18,11 +18,14 @@ class Weapon(Item):
         super().__init__(name, description)
         self.damage = damage
         self.durability = durability
+        self.max_durability = durability
+        self.name = name
     def attack(self,user,target):
         if self.durability <= 0:
             print(self.name + " is broken and can't be used!")
             print("")
             user.weapon = None
+            del self
             return
         else:
             target.hp -= self.damage
@@ -41,6 +44,7 @@ class Weapon(Item):
 class Potion(Item):
     def __init__(self, name, description, healing_amount, quantity):
         super().__init__(name, description)
+        self.name = name
         self.healing_amount = healing_amount
         self.quantity = quantity
     def use(self, player):

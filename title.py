@@ -6,16 +6,22 @@ from new_game import character_creation
 from text_utils import animate_title, center_text
 
 def credits_screen():
-    os.system('cls' if os.name == 'nt' else 'clear') 
-    animate_title(Fore.MAGENTA + "Credits")
+    os.system('cls' if os.name == 'nt' else 'clear')
+    animate_title(Fore.MAGENTA + "=== CREDITS ===")
     print("")
-    animate_title(Fore.LIGHTGREEN_EX + "Game by Priesty")   
+    animate_title(Fore.LIGHTGREEN_EX + "A Game by: ")
+    time.sleep(1)
+    animate_title(Fore.YELLOW + "░▒▓█ PRIESTY █▓▒░")
+    print("")
+    time.sleep(1)
+    animate_title(Fore.CYAN + "Design, Code, Music, Art, Everything:")
+    animate_title(Fore.WHITE + "→ Just Me. Hope you had fun :)")
     time.sleep(3)
     title_screen()
 
 def title_screen():
     os.system('cls' if os.name == 'nt' else 'clear') 
-    animate_title(Fore.MAGENTA + "Priesty's Quest")
+    animate_title(Fore.MAGENTA + "Corrupted Shadows")
     print(center_text(Fore.WHITE + ""))
     print(center_text("- Play -"))
     print(center_text("- Credits -"))
