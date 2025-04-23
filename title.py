@@ -13,9 +13,6 @@ def credits_screen():
     time.sleep(1)
     animate_title(Fore.YELLOW + "░▒▓█ PRIESTY █▓▒░")
     print("")
-    time.sleep(1)
-    animate_title(Fore.CYAN + "Design, Code, Music, Art, Everything:")
-    animate_title(Fore.WHITE + "→ Just Me. Hope you had fun :)")
     time.sleep(3)
     title_screen()
 
