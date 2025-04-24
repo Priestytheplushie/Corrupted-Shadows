@@ -30,25 +30,8 @@ def title_screen():
         option = input(Fore.YELLOW + "> ").lower()
 
     if option == "play":
-        play_menu()
+        return character_creation()
     elif option == "credits":
         credits_screen()
     elif option == "quit":
         sys.exit()
-
-def play_menu():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    animate_title(Fore.CYAN + "Select Game Mode")
-    print(center_text(Fore.WHITE+"- Campaign -"))
-    print(center_text("- Arena -"))
-
-    option = input(Fore.YELLOW + "> ").lower()
-    while option not in ['campaign', 'arena']:
-        print(Fore.RED + "Invalid input! Please type 'Campaign' or 'Arena'.\n")
-        option = input(Fore.YELLOW + "> ").lower()
-
-    if option == "campaign":
-        return character_creation()
-    elif option == "arena":
-        from arena.arena_main import main
-        main()
