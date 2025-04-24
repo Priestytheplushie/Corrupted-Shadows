@@ -40,7 +40,6 @@ def show_character_sheet(player,clear_screen=True):
 
     # Basic Info
     print(Fore.YELLOW + "Name".ljust(15) + ": " + str(player.name))
-    print(Fore.YELLOW + "Difficulty".ljust(15) + ": " + str(difficulty))
     print("")
     
     # Combat Stats
