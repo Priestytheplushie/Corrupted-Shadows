@@ -1,4 +1,4 @@
-from items import Weapon, Potion, Item
+from items import *
 from item_data import item_library
 
 def create_item(name):
@@ -13,6 +13,10 @@ def create_item(name):
         return Weapon(name, data["description"], data["damage"], data["durability"])
     elif item_type == "potion":
         return Potion(name, data["description"], data["healing_amount"], data["quantity"])
+    elif item_type == "cleansing_flute": 
+        return CleansingFlute(name, data["description"], data["uses"])
+    elif item_type == "useable_item": 
+        return CleansingFlute(name, data["description"], data["uses"])
     elif item_type == "item":
         return Item(name, data["description"])
     else:
