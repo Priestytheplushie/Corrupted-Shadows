@@ -38,10 +38,12 @@ def chapter_1(player):
     iron_sword = create_item("Iron Sword")
     potion = create_item("Health Potion")
     cleansing_flute = create_item("Cleansing Flute")
+    orc_mace = create_item("Orc's Mace")
 
     player.inventory.add_item(iron_sword)
     player.inventory.add_item(potion)
     player.inventory.add_item(cleansing_flute)
+    player.inventory.add_item(orc_mace)
 
     # Chapter Structure
     intro(player)
@@ -143,7 +145,6 @@ def the_village(player):
             else:
                 print(Fore.GREEN + " [1] ".ljust(6) + "Protect the Village")
                 print(Fore.GREEN + " [2] ".ljust(6) + "Run Away", Fore.RED + "(Speed: 10)")
-                print(Fore.YELLOW + " [3] ".ljust(6) + "Check Inventory")
             print(Fore.YELLOW + " [3] ".ljust(6) + "Check Inventory")
             print(Fore.CYAN + "=" * 50)
             print(Fore.BLUE + "Your Speed:", player.speed)

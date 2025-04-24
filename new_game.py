@@ -71,7 +71,6 @@ def character_creation():
 
     print("\n")
 
-    # Create player object and show character sheet
     player = Player(name, hp, strength, speed, intelligence, defense, money,None)
     show_character_sheet(player)
 

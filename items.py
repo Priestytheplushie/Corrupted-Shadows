@@ -48,6 +48,44 @@ class Weapon(Item):
         print(Fore.CYAN + player.name + " equipped " + self.name + "!" + Style.RESET_ALL)
         print("")
 
+class OrcsMace(Weapon):
+    def __init__(self, name, description, damage, durability):
+        super().__init__(name, description, damage, durability)
+        self.aoe = True
+        self.damage = damage
+        self.durability = durability
+        self.max_durability = durability
+        self.name = name
+        self.aoe = True
+
+    def attack(self,user,target):
+        if self.durability <= 0:
+            print(self.name + " is broken and can't be used!")
+            print("")
+            user.weapon = None
+            del self
+            return
+        else:
+            if random.random() < 0.10:
+                print(Fore.YELLOW + user.name + " swings at " + target.name + " but misses!" + Fore.WHITE)
+                print("")
+                time.sleep(1)
+                return
+            target.hp -= self.damage
+            self.durability -= 1
+            print(user.name + " smashes " + target.name + " with " + target.name + ", dealing " + str(self.damage) + " damage!")
+            print("")
+            time.sleep(1)
+            print(self.name + " durability: " + str(self.durability))
+            print("")
+            if random.random() < 0.3:
+                target.apply_status('stagger', 2)
+    
+    def equip(self, player):
+        player.weapon = self
+        print(Fore.CYAN + player.name + " equipped " + self.name + "!" + Style.RESET_ALL)
+        print("")
+
 class Potion(Item):
     def __init__(self, name, description, healing_amount, quantity):
         super().__init__(name, description)

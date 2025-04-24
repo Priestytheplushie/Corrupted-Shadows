@@ -7,7 +7,7 @@ import time
 from game_data import difficulty 
 
 class Enemy:
-    def __init__(self, name, level, hp, strength, speed, intelligence, defense, weapon=None):
+    def __init__(self, name, level, hp, strength, speed, intelligence, defense, weapon=None,loot_table_key="none"):
         self.name = name
         self.hp = hp
         self.strength = strength
@@ -15,9 +15,10 @@ class Enemy:
         self.intelligence = intelligence
         self.defense = defense
         self.max_hp = self.hp
-        self.status_effects = []
+        self.status_effects = []  
         self.weapon = weapon
         self.level = level
+        self.loot_table_key = loot_table_key
         self.adjust_for_difficulty()
 
     def adjust_for_difficulty(self):
@@ -46,6 +47,32 @@ class Enemy:
         self.hp += random.randint(5, 10)
         self.defense += random.randint(2, 4)
 
+    def apply_status(self, effect_name, duration):
+        found = False
+        for effect in self.status_effects:
+            if effect['name'] == effect_name:
+                effect['duration'] = duration
+                found = True
+        if not found:
+            self.status_effects.append({'name': effect_name, 'duration': duration})
+
+    def has_status(self, effect_name):
+        for effect in self.status_effects:
+            if effect['name'] == effect_name:
+                return True
+        return False
+
+    def tick_status_effects(self):
+        remaining = []
+        for effect in self.status_effects:
+            effect['duration'] -= 1
+            if effect['duration'] > 0:
+                remaining.append(effect)
+            else:
+                print(self.name + " is no longer affected by " + effect['name'] + ".")
+                print("")
+        self.status_effects = remaining
+
     def basic_attack(self, player):
         if random.random() < 0.10:
             print(Fore.YELLOW + self.name + " swings at " + player.name + " but misses!" + Fore.WHITE)
@@ -64,6 +91,10 @@ class Enemy:
         print("")
 
     def choose_action(self, target):
+        if self.has_status('stagger'):
+            print(self.name + " is staggered and misses their turn!")
+            print("")
+            return
         self.basic_attack(target)
 
 class Goblin(Enemy):
@@ -75,8 +106,10 @@ class Goblin(Enemy):
         self.intelligence = 0
         self.defense = 0
         self.max_hp = self.hp
+        self.status_effects = []  
         self.weapon = None
         self.level = level
+        self.loot_table_key = "goblin"
 
         self.apply_difficulty()
     
@@ -106,6 +139,11 @@ class Goblin(Enemy):
             print("")
 
     def choose_action(self, target):
+        self.tick_status_effects()
+        if self.has_status('stagger'):
+            print(self.name + " is staggered and can't move this turn.")
+            print("")
+            return
         if target.money > 0 and random.random() < 0.3:
             self.rob(target)
         else:
@@ -140,6 +178,8 @@ class CorruptedGoblin(Enemy):
         self.max_hp = self.hp
         self.weapon = None
         self.level = level
+        self.loot_table_key = "goblin"
+        self.status_effects = []  
         self.unstable = unstable
         self.corrupted = corrupted
 
@@ -171,8 +211,12 @@ class CorruptedGoblin(Enemy):
             raw_damage = random.randint(self.strength - 2, self.strength + 2)
             damage = max(1, raw_damage - player.defense)
             player.hp -= damage
-            print(self.name + "twitches violently and steals $" + str(stolen_money) + ", dealing " + str(damage) + " damage!")
-            print("")
+            if self.unstable:
+                print(self.name + " twitches violently and steals $" + str(stolen_money) + ", dealing " + str(damage) + " damage!")
+                print("")
+            else:
+                print(self.name + " attempts to rob " + player.name + ", stealing $" + str(stolen_money) + " and dealing " + str(damage) + " damage!")
+                print("")
             if player.defense > 0:
                 print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(raw_damage) + " by defense)" + Fore.WHITE)
                 print("")
@@ -184,6 +228,11 @@ class CorruptedGoblin(Enemy):
             print("")
 
     def choose_action(self, target):
+        self.tick_status_effects()
+        if self.has_status('stagger'):
+            print(self.name + " is staggered and can't move this turn.")
+            print("")
+            return
         if self.unstable == True and random.random() < 0.2:
             print(self.name+ " twitches violently, dealing 5 damage to itself")
             print("")
@@ -235,8 +284,10 @@ class Orc(Enemy):
         self.intelligence = 0
         self.defense = 10 + level
         self.max_hp = self.hp
+        self.status_effects = []  
         self.weapon = None
         self.level = level
+        self.loot_table_key = "orc"
 
         self.apply_difficulty()
 
@@ -262,10 +313,30 @@ class Orc(Enemy):
             player.apply_status('stagger', 1)
     
     def choose_action(self, target):
+        self.tick_status_effects()
+        if self.has_status('stagger'):
+            print(self.name + " is staggered and can't move this turn.")
+            print("")
+            return
         if random.random() < 0.5:
             self.smash(target)
         else:
             self.basic_attack(target)
+    
+    def apply_difficulty(self):
+        global difficulty
+        if difficulty <= 25:
+            self.hp = int(self.hp * 0.9)
+            self.strength = int(self.strength * 0.8)
+            self.defense = int(self.defense * 0.8)
+        elif difficulty <= 50:
+            self.hp = int(self.hp * 1.1)
+            self.strength = int(self.strength * 1.1)
+            self.defense = int(self.defense * 1.05)
+        elif difficulty >= 51 and difficulty <= 100:
+            self.hp = int(self.hp * 1.2)
+            self.strength = int(self.strength * 1.3)
+            self.defense = int(self.defense * 1.2)
 
 class CorruptedOrc(Enemy):
     def __init__(self, level,unstable=False,corrupted=True):
@@ -278,12 +349,12 @@ class CorruptedOrc(Enemy):
         self.intelligence = 0
         self.defense = 10 + level
         self.max_hp = self.hp
+        self.status_effects = []  
         self.weapon = None
+        self.loot_table_key = "orc"
         self.level = level
         self.unstable = unstable
         self.corrupted = corrupted
-
-        self.apply_difficulty()
 
         if corrupted:
             # Store Non-corrupted Stats
@@ -295,9 +366,11 @@ class CorruptedOrc(Enemy):
             # Buff Enemy
             self.hp += 5 * level
             self.strength += level + 5
-            self.speed = self.speed + level
+            self.speed += level
             self.defense += level
             self.max_hp = self.hp
+
+        self.apply_difficulty() 
 
     def smash(self, player):
         if random.random() < 0.30: 
@@ -320,6 +393,11 @@ class CorruptedOrc(Enemy):
             player.apply_status('stagger', 2)
 
     def choose_action(self, target):
+        self.tick_status_effects()
+        if self.has_status('stagger'):
+            print(self.name + " is staggered and can't move this turn.")
+            print("")
+            return
         if self.unstable == True and random.random() < 0.2:
             print(Fore.WHITE+"The Orc growls in pain, giving you a chance for")
             print('an easy attack!')
@@ -341,22 +419,6 @@ class CorruptedOrc(Enemy):
             self.corrupted = False
 
             self.name = self.cleansed_name
-
-    def apply_difficulty(self):
-        global difficulty
-        if difficulty <= 25:
-            self.hp = int(self.hp * 0.9)
-            self.strength = int(self.strength * 0.8)
-            self.defense = int(self.defense * 0.8)
-        elif difficulty <= 50:
-            self.hp = int(self.hp * 1.1)
-            self.strength = int(self.strength * 1.1)
-            self.defense = int(self.defense * 1.05)
-        elif difficulty >= 51 and difficulty <= 100:
-            self.hp = int(self.hp * 1.2)
-            self.strength = int(self.strength * 1.3)
-            self.defense = int(self.defense * 1.2)
-
 
     def reveal_identity(self):
         self.name = self.real_name

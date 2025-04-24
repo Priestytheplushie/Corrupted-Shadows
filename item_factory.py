@@ -11,12 +11,14 @@ def create_item(name):
 
     if item_type == "weapon":
         return Weapon(name, data["description"], data["damage"], data["durability"])
+    if item_type == "orc_mace":
+        return OrcsMace(name, data["description"], data["damage"], data["durability"])
     elif item_type == "potion":
         return Potion(name, data["description"], data["healing_amount"], data["quantity"])
     elif item_type == "cleansing_flute": 
         return CleansingFlute(name, data["description"], data["uses"])
     elif item_type == "useable_item": 
-        return CleansingFlute(name, data["description"], data["uses"])
+        return UseableItem(name, data["description"], data["uses"])
     elif item_type == "item":
         return Item(name, data["description"])
     else:
