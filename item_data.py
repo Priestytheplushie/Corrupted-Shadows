@@ -1,4 +1,4 @@
-from items import Item, Weapon, Potion
+from items import *
 
 # Item Types
 # item = generic item
@@ -17,6 +17,12 @@ item_library = {
         "description": "Restores 50 HP.",
         "healing_amount": 50,
         "quantity": 1
+    },
+    "Cleansing Flute": {
+        "type": "cleansing_flute",
+        "description": "Cleanses monsters from the corruption, reducing their stats",
+        "healing_amount": 50,
+        "uses": 5
     }
 }
 

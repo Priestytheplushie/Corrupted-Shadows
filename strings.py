@@ -107,3 +107,88 @@ def random_initiative_message(player, enemy):
         Fore.RED + enemy.name + Fore.WHITE + " blinks. You blink. Nobody wins. Yet."
     ]
     return random.choice(messages)
+
+def multi_battle_intro(player, enemies):
+    enemy_count = len(enemies)
+
+    normal_messages = [
+        Fore.GREEN + player.name + Fore.WHITE + " faces off against " + str(enemy_count) + " enemies. No backing down now!",
+        Fore.YELLOW + "The enemies gather, weapons raised. " + Fore.GREEN + player.name + Fore.YELLOW + " takes a deep breath.",
+        Fore.CYAN + "They're surrounding you. It's not just a fight... it's a challenge.",
+        Fore.MAGENTA + player.name + Fore.WHITE + " cracks their knuckles. Time to take them all on.",
+        Fore.BLUE + "You feel the odds are stacked, but that never stopped you before.",
+        Fore.RED + "Multiple foes approach. " + player.name + " stands alone, unshaken."
+    ]
+
+    funny_messages = [
+        Fore.GREEN + player.name + Fore.WHITE + ": 'Okay, how many of you are there again?'",
+        Fore.YELLOW + "One enemy growls. Then another. Then... you lose count.",
+        Fore.CYAN + player.name + Fore.WHITE + " dramatically draws their weapon... and immediately trips.",
+        Fore.MAGENTA + "You try to intimidate them with a cool pose. It kind of works.",
+        Fore.RED + str(enemy_count) + " enemies? You've fought worse. Like that one time... never mind.",
+        Fore.BLUE + "You accidentally yell your full battle plan out loud. Oops."
+    ]
+
+    serious_messages = [
+        Fore.RED + "The battlefield is filled with hostile eyes. " + player.name + " prepares for war.",
+        Fore.MAGENTA + "Shadows shift as your enemies encircle you. The tension is unbearable.",
+        Fore.YELLOW + "This is no ordinary fight. You're outnumbered — and they know it.",
+        Fore.CYAN + player.name + Fore.WHITE + " tightens their grip. There's no room for error.",
+        Fore.GREEN + "Steel clashes with resolve. You are the last line of defense.",
+        Fore.BLUE + "You feel the weight of the battle ahead. " + str(enemy_count) + " enemies... one you."
+    ]
+
+    roll = random.random()
+    if roll < 0.1:
+        return random.choice(serious_messages)
+    elif roll < 0.3:
+        return random.choice(funny_messages)
+    else:
+        return random.choice(normal_messages)
+
+def multi_battle_player_goes_first(player, enemies):
+    messages = [
+        Fore.GREEN + player.name + Fore.WHITE + " charges ahead, striking before the enemy group can react!",
+        Fore.YELLOW + "You rush forward with fierce determination — they weren’t ready for that!",
+        Fore.BLUE + "You pick your target from the crowd and dive into battle.",
+        Fore.CYAN + "With lightning speed, you disrupt their formation before they can act.",
+        
+        # Funny
+        Fore.MAGENTA + player.name + Fore.WHITE + ": 'Guess I'll go first!'",
+        Fore.RED + "You scream a battle cry and barrel toward the enemy mob. Bold move.",
+        Fore.WHITE + "You're halfway into the fight before realizing no one followed.",
+        Fore.BLUE + "You leap in, accidentally tripping over the first guy — hey, still counts.",
+    ]
+    return random.choice(messages)
+
+def multi_battle_enemies_go_first(player, enemies):
+    messages = [
+        Fore.RED + "The enemy group surges forward, catching you slightly off guard!",
+        Fore.YELLOW + "They move as one — overwhelming speed and aggression.",
+        Fore.MAGENTA + "You raise your guard just in time as they make the first move.",
+        Fore.CYAN + "You’re forced on the defensive as the entire group attacks at once.",
+        
+        # Funny
+        Fore.RED + "One yells 'CHARGE!' and the rest just follow. Classic.",
+        Fore.YELLOW + "You blink and suddenly they’re all screaming and running at you.",
+        Fore.BLUE + "You were still picking targets when they all picked *you*.",
+        Fore.RED + "The enemies jump you... You're alone and outnumbered... What a pitty",
+        Fore.WHITE + "They bum-rush you with chaotic energy. Not very coordinated... but effective."
+    ]
+    return random.choice(messages)
+
+def multi_battle_random_initiative(player, enemies):
+    messages = [
+        Fore.WHITE + "Both sides explode into action at once! It's pure chaos.",
+        Fore.YELLOW + "You and your enemies rush in together — there's no clear advantage.",
+        Fore.CYAN + "The battlefield erupts as everyone charges. Timing? Luck will decide.",
+        Fore.BLUE + "It's a blur of motion as the clash begins all at once.",
+        
+        # Funny
+        Fore.GREEN + "You shout 'GO!' — so do they. It’s awkward.",
+        Fore.MAGENTA + "Everyone stumbles forward at the same time. Graceful? Not really.",
+        Fore.RED + "You and three enemies try to hit the same guy. It’s confusing.",
+        Fore.BLUE + "Someone yells 'WAIT!' but nobody listens. It's on.",
+    ]
+    return random.choice(messages)
+

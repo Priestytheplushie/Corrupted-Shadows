@@ -18,7 +18,7 @@ def character_creation():
     while name.strip() == '':
         typewriter(Fore.RED + "You must enter a name!", delay=0.03)
         name = input(Fore.CYAN + "> ")
-    
+        
     print("\n")
     
     # Difficulty selection
@@ -72,7 +72,7 @@ def character_creation():
     print("\n")
 
     # Create player object and show character sheet
-    player = Player(name, hp, strength, speed, intelligence, defense, money, difficulty)
+    player = Player(name, hp, strength, speed, intelligence, defense, money,None)
     show_character_sheet(player)
 
     return player
