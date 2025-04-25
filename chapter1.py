@@ -38,12 +38,10 @@ def chapter_1(player):
     iron_sword = create_item("Iron Sword")
     potion = create_item("Health Potion")
     cleansing_flute = create_item("Cleansing Flute")
-    orc_mace = create_item("Orc's Mace")
 
     player.inventory.add_item(iron_sword)
     player.inventory.add_item(potion)
     player.inventory.add_item(cleansing_flute)
-    player.inventory.add_item(orc_mace)
 
     # Chapter Structure
     intro(player)
