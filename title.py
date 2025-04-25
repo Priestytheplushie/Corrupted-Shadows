@@ -10,10 +10,10 @@ def credits_screen():
     animate_title(Fore.MAGENTA + "=== CREDITS ===")
     print("")
     animate_title(Fore.LIGHTGREEN_EX + "A Game by: ")
-    time.sleep(1)
+    smart_sleep(1)
     animate_title(Fore.YELLOW + "░▒▓█ PRIESTY █▓▒░")
     print("")
-    time.sleep(3)
+    smart_sleep(3)
     title_screen()
 
 def title_screen():

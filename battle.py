@@ -112,10 +112,10 @@ def battle_conclusion(player, enemies, mode):
         typewriter(Fore.YELLOW + player.name + " has defeated " + enemy.name + "!", delay=0.1)
         typewriter(Fore.GREEN + player.name + " gains " + str(total_xp) + " XP and " + str(total_money) + " coins!", delay=0.1)
 
-    time.sleep(1)
+    smart_sleep(1)
     clear_screen()
     animate_title(Fore.CYAN + "BATTLE OVER!", delay=0.05)
-    time.sleep(1)
+    smart_sleep(1)
 
     print(center_text(Fore.WHITE + "Total XP: " + str(total_xp)))
     print(center_text(Fore.WHITE + "Current HP: " + str(player.hp) + "/" + str(player.max_hp)))
@@ -170,13 +170,13 @@ def enemy_turn(player, enemies, mode):
     if player.is_staggered():
         print(Fore.YELLOW + player.name + " is staggered and can't act this turn!")
         print("")
-        time.sleep(1)
+        smart_sleep(1)
     else:
         if mode == "multi":
             for enemy in enemies:
                 if enemy.hp > 0:
                     enemy.choose_action(player)
-                    time.sleep(2)
+                    smart_sleep(2)
         else:
             if enemies[0].hp > 0: 
                 enemies[0].choose_action(player)
@@ -214,7 +214,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
         if player.is_staggered():
             print(Fore.YELLOW + player.name + " is staggered and can’t act normally!")
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             break
         typewriter(Fore.YELLOW + "What will you do?")
         print(Fore.GREEN + "1. Attack")
@@ -272,11 +272,11 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                                 # AOE Weapon: Attack all enemies
                                 print(Fore.YELLOW + "You unleash a powerful area-of-effect attack!")
                                 print("")
-                                time.sleep(2)
+                                smart_sleep(2)
                                 for enemy in enemies:
                                     if enemy.hp > 0:  # Only attack alive enemies
                                         player.weapon.attack(player, enemy)
-                                        time.sleep(2)
+                                        smart_sleep(2)
                             else:
                                 # Single-target weapon
                                 player.attack(target)
@@ -354,7 +354,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                                 print("")
                                 print(Fore.GREEN + item.name + " used! Remaining AP: " + str(ap))
                                 print("")
-                                time.sleep(1)
+                                smart_sleep(1)
                         else:
                             print(Fore.RED + "Invalid item selection.")
                     except ValueError:
@@ -370,7 +370,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                     print(Fore.LIGHTBLACK_EX + "   Durability: %s/%s" % (str(item.durability), str(item.max_durability)))
                 elif hasattr(item, "quantity"):
                     print(Fore.LIGHTBLACK_EX + "   Quantity: %s" % str(item.quantity))
-                time.sleep(3)
+                smart_sleep(3)
 
         elif choice == "5":
             show_character_sheet(player, False)
@@ -400,22 +400,22 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
     if battle_mode == "multi":
         typewriter(random.choice(multi_battle_intro(player, enemies)))
         print("")
-        time.sleep(1)
+        smart_sleep(1)
         if all(enemy.speed < player.speed for enemy in enemies):
             typewriter(multi_battle_player_goes_first(player, enemies))
             print("")
-            time.sleep(2)
+            smart_sleep(2)
             player_turn(player, enemies, battle_mode, bonus_ap)
             player_went_first = True
         elif all(enemy.speed > player.speed for enemy in enemies):
             typewriter(multi_battle_enemies_go_first(player, enemies))
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             enemy_turn(player, enemies, battle_mode)
         else:
             typewriter(multi_battle_random_initiative(player, enemies))
             print("")
-            time.sleep(3)
+            smart_sleep(3)
             if random.choice([True, False]):
                 player_turn(player, enemies, battle_mode, bonus_ap)
                 player_went_first = True
@@ -424,28 +424,28 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
     else:
         typewriter(randomized_intro_messages(player, enemies[0]))
         print("")
-        time.sleep(2)
+        smart_sleep(2)
         typewriter(Fore.YELLOW + "Battle started!")
         print("")
-        time.sleep(1)
+        smart_sleep(1)
         typewriter(Fore.GREEN + player.name + Fore.WHITE + " v.s " + Fore.RED + enemies[0].name)
         print("")
-        time.sleep(2)
+        smart_sleep(2)
         if enemies[0].speed > player.speed:
             typewriter(enemy_attacks_first_message(player, enemies[0]))
             print("")
-            time.sleep(2)
+            smart_sleep(2)
             enemy_turn(player, enemies, battle_mode)
         elif enemies[0].speed < player.speed:
             typewriter(player_attacks_first_message(player, enemies[0]))
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             player_turn(player, enemies, battle_mode, bonus_ap)
             player_went_first = True
         else:
             typewriter(random_initiative_message(player, enemies[0]))
             print("")
-            time.sleep(3)
+            smart_sleep(3)
             if random.randint(1, 2) == 1:
                 player_turn(player, enemies, battle_mode, bonus_ap)
                 player_went_first = True

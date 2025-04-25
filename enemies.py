@@ -77,7 +77,7 @@ class Enemy:
         if random.random() < 0.10:
             print(Fore.YELLOW + self.name + " swings at " + player.name + " but misses!" + Fore.WHITE)
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return
         raw_damage = calculate_attack(self.strength, 0)
         damage = max(1, raw_damage - player.defense)
@@ -117,7 +117,7 @@ class Goblin(Enemy):
         if random.random() < 0.50:
             print(Fore.YELLOW + self.name + " attempts to mug " + player.name + " but misses!" + Fore.WHITE)
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return
         if player.money > 0:
             stolen_money = random.randint(1, player.money)
@@ -203,7 +203,7 @@ class CorruptedGoblin(Enemy):
         if random.random() < 0.50: 
             print(Fore.YELLOW + self.name + " attempts to mug " + player.name + " but misses!" + Fore.WHITE)
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return
         if player.money > 0:
             stolen_money = random.randint(1, player.money)
@@ -295,7 +295,7 @@ class Orc(Enemy):
         if random.random() < 0.30: 
             print(Fore.YELLOW + self.name + " smashes the ground at " + player.name + " but misses!" + Fore.WHITE)
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return
         raw_damage = calculate_attack(self.strength, 10)
         damage = max(1, raw_damage - player.defense)
@@ -309,7 +309,7 @@ class Orc(Enemy):
         print(player.name + " remaining HP: " + str(player.hp))
         print("")
         if random.random() < 0.2:
-            time.sleep(1)
+            smart_sleep(1)
             player.apply_status('stagger', 1)
     
     def choose_action(self, target):
@@ -376,7 +376,7 @@ class CorruptedOrc(Enemy):
         if random.random() < 0.30: 
             print(Fore.YELLOW + self.name + " smashes the ground at " + player.name + " but misses!" + Fore.WHITE)
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return
         raw_damage = calculate_attack(self.strength, 10)
         damage = max(1, raw_damage - player.defense)
@@ -389,7 +389,7 @@ class CorruptedOrc(Enemy):
         print(player.name + " remaining HP: " + str(player.hp))
         print("")
         if random.random() < 0.2:
-            time.sleep(1)
+            smart_sleep(1)
             player.apply_status('stagger', 2)
 
     def choose_action(self, target):
@@ -402,7 +402,7 @@ class CorruptedOrc(Enemy):
             print(Fore.WHITE+"The Orc growls in pain, giving you a chance for")
             print('an easy attack!')
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return 
         if random.random() < 0.5:
             self.smash(target)

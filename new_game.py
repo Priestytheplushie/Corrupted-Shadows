@@ -24,7 +24,7 @@ def character_creation():
     # Difficulty selection
     typewriter(Fore.YELLOW + "Select difficulty (1-100)", delay=0.03)
     difficulty_input = input(Fore.CYAN + "> ")
-    while not difficulty_input.isdigit() or not (0 <= int(difficulty_input) <= 100):
+    while not difficulty_input.isdigit() or not (1 <= int(difficulty_input) <= 100):
         typewriter(Fore.RED + "Invalid input! Please choose a number between 1 and 100.", delay=0.03)
         difficulty_input = input(Fore.CYAN + "> ")
 

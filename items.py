@@ -33,13 +33,13 @@ class Weapon(Item):
             if random.random() < 0.10:
                 print(Fore.YELLOW + user.name + " swings at " + target.name + " but misses!" + Fore.WHITE)
                 print("")
-                time.sleep(1)
+                smart_sleep(1)
                 return
             target.hp -= self.damage
             self.durability -= 1
             print(user.name + " attacks with " + self.name + ", dealing " + str(self.damage) + " damage to " + target.name + "!")
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             print(self.name + " durability: " + str(self.durability))
             print("")
     
@@ -69,13 +69,13 @@ class OrcsMace(Weapon):
             if random.random() < 0.10:
                 print(Fore.YELLOW + user.name + " swings at " + target.name + " but misses!" + Fore.WHITE)
                 print("")
-                time.sleep(1)
+                smart_sleep(1)
                 return
             target.hp -= self.damage
             self.durability -= 1
             print(user.name + " smashes " + target.name + " with " + target.name + ", dealing " + str(self.damage) + " damage!")
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             print(self.name + " durability: " + str(self.durability))
             print("")
             if random.random() < 0.3:

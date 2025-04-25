@@ -28,7 +28,7 @@ class Player:
         if random.random() < 0.15:  # Miss chance
             print(Fore.YELLOW + self.name + " swings at " + enemy.name + " but misses!" + Fore.WHITE)
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return
         # Calculate damage with a small variation
         raw_damage = calculate_attack(self.strength)
@@ -47,7 +47,7 @@ class Player:
         if random.random() < 0.15:
             print(Fore.YELLOW + self.name + " swings at " + enemy.name + " but misses!" + Fore.WHITE)
             print("")
-            time.sleep(1)
+            smart_sleep(1)
             return
         raw_damage = calculate_attack(self.strength, self.weapon.damage if self.weapon else 0)
         damage = max(1, raw_damage - enemy.defense)
@@ -59,7 +59,7 @@ class Player:
         print("")
         print(enemy.name + " remaining HP: " + str(enemy.hp))
         print("")
-        time.sleep(1)
+        smart_sleep(1)
 
     
     def show_inventory(self):
