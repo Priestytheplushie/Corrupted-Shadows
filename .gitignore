@@ -1,3 +1,8 @@
 **/__pycache__
 **/*.pyc
 *.code-workspace
+**/__pycache__
+**/*.pyc
+*.code-workspace
+main.build
+main.dist
