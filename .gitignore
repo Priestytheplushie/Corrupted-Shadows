@@ -1,8 +1,18 @@
-**/__pycache__
-**/*.pyc
+# Nuitka build folder
+build/
+dist/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.spec
+
+# VS Code
+.vscode/
 *.code-workspace
-**/__pycache__
-**/*.pyc
-*.code-workspace
-main.build
-main.dist
+.venv/
+
+# Ignore custom folders if needed
+main.build/
+main.dist/
+main.onefile-build/
