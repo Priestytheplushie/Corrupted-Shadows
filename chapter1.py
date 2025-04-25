@@ -37,11 +37,9 @@ def chapter_1(player):
     # Assign Starting Equipment
     iron_sword = create_item("Iron Sword")
     potion = create_item("Health Potion")
-    cleansing_flute = create_item("Cleansing Flute")
 
     player.inventory.add_item(iron_sword)
     player.inventory.add_item(potion)
-    player.inventory.add_item(cleansing_flute)
 
     # Chapter Structure
     intro(player)
@@ -246,7 +244,7 @@ def the_forest(player, village_result):
         typewriter("something isn't quite right")
         print("")
         time.sleep(1)
-        typewriter("The goblins sorrsurroundund you, but show no intreast in your coin, the clearing grows quiet, alll you can")
+        typewriter("The goblins surrounded you, but show no intreast in your coin, the clearing grows quiet, alll you can")
         typewriter("hear is the cold laughter of the goblins closing in on you... You've got to do something!")
         print("")
         time.sleep(2)
@@ -288,6 +286,6 @@ def the_forest(player, village_result):
     print(Fore.YELLOW + "Where will you go?".center(50))
     print(Fore.CYAN + "=" * 50)
     print(Fore.GREEN + " [1] ".ljust(6) + "Head Left")
-    print(Fore.GREEN + " [2] ".ljust(6) + "Head North")
+    print(Fore.GREEN + " [2] ".ljust(6) + "Head Right")
     print(Fore.YELLOW +" [3]".ljust(6) + "Check Inventory")
     print(Fore.CYAN + "=" * 50)
