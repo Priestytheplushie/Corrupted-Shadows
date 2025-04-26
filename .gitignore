@@ -1,8 +1,15 @@
+# Ignore compiled Python files
 **/__pycache__
 **/*.pyc
+
+# Ignore VS Code workspace files
 *.code-workspace
-**/__pycache__
-**/*.pyc
-*.code-workspace
-main.build
-main.dist
+
+# Ignore build directories
+main.build/
+main.dist/
+dist/
+
+# Ignore main.spec file
+main.spec
+
