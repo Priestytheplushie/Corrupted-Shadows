@@ -5,6 +5,7 @@ import re
 import time
 from colorama import Fore
 import random
+from game_data import text_speed
 
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
@@ -30,6 +31,15 @@ def animate_title(text, delay=0.1):
     print()
 
 def typewriter(text, delay=0.05):
+    global text_speed
+    if text_speed == "slow":
+        delay = 0.1
+    elif text_speed == "normal":
+        delay = 0.05
+    elif text_speed == "fast":
+        delay = 0.02
+    elif text_speed == "very fast":
+        delay = 0.005
     for char in text:
         print(char, end='', flush=True)
         time.sleep(delay)

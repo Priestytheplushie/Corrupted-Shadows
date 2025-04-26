@@ -23,6 +23,7 @@ class Weapon(Item):
         self.max_durability = durability
         self.name = name
     def attack(self,user,target):
+        total_damage = self.damage + user.strength
         if self.durability <= 0:
             print(self.name + " is broken and can't be used!")
             print("")
@@ -35,9 +36,13 @@ class Weapon(Item):
                 print("")
                 time.sleep(1)
                 return
-            target.hp -= self.damage
+            target.hp -= total_damage
             self.durability -= 1
-            print(user.name + " attacks with " + self.name + ", dealing " + str(self.damage) + " damage to " + target.name + "!")
+            print(user.name + " attacks with " + self.name + ", dealing " + str(total_damage) + " damage to " + target.name + "!")
+            if target.defense > 0:
+                print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(total_damage) + " by defense)" + Fore.WHITE)
+            print("")
+            print(target.name + " remaining HP: " + str(target.hp))
             print("")
             time.sleep(1)
             print(self.name + " durability: " + str(self.durability))
@@ -59,6 +64,7 @@ class OrcsMace(Weapon):
         self.aoe = True
 
     def attack(self,user,target):
+        total_damage = self.damage + user.strength
         if self.durability <= 0:
             print(self.name + " is broken and can't be used!")
             print("")
@@ -71,9 +77,13 @@ class OrcsMace(Weapon):
                 print("")
                 time.sleep(1)
                 return
-            target.hp -= self.damage
+            target.hp -= total_damage
             self.durability -= 1
-            print(user.name + " smashes " + target.name + " with " + target.name + ", dealing " + str(self.damage) + " damage!")
+            print(user.name + " smashes " + target.name + " with " + target.name + ", dealing " + str(total_damage) + " damage!")
+            if target.defense > 0:
+                print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(total_damage) + " by defense)" + Fore.WHITE)
+            print("")
+            print(target.name + " remaining HP: " + str(target.hp))
             print("")
             time.sleep(1)
             print(self.name + " durability: " + str(self.durability))

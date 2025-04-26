@@ -73,7 +73,7 @@ def battle_conclusion(player, enemies, mode):
         for enemy in enemies:
             if enemy.hp <= 0:
                 killed_enemies.append(enemy.name)
-                total_xp += calculate_xp(enemy,player)
+                total_xp += calculate_xp(enemy, player)
                 total_money += calculate_money(enemy, difficulty)
 
                 if enemy.corrupted:
@@ -81,7 +81,8 @@ def battle_conclusion(player, enemies, mode):
                 else:
                     loot = roll_loot(enemy.name)
 
-                total_loot.extend(loot)
+                # Append loot with the enemy name to associate the loot with the specific enemy
+                total_loot.append((enemy.name, loot))  # Tuple (enemy_name, loot)
 
         total_xp += int(total_xp * 0.25)
         total_money += int(total_money * 0.25)
@@ -92,22 +93,22 @@ def battle_conclusion(player, enemies, mode):
         typewriter(Fore.GREEN + player.name + " gains " + str(total_xp) + " XP and " + str(total_money) + " coins!", delay=0.1)
 
         enemies = [e for e in enemies if e.hp > 0]
-    else:
+    else:  # Single battle mode
         enemy = enemies[0]
         if enemy.hp <= 0:
             killed_enemies.append(enemy.name)
-            total_xp += calculate_xp(enemy)
+            total_xp += calculate_xp(enemy, player)
             total_money += calculate_money(enemy, difficulty)
 
-        if enemy.loot_table_key != "none":
-            if enemy.corrupted:
-                loot = roll_corrupted_loot(enemy.loot_table_key, unstable=enemy.unstable)
+            # Roll loot for single battles as well
+            if enemy.loot_table_key != "none":
+                if enemy.corrupted:
+                    loot = roll_corrupted_loot(enemy.loot_table_key, unstable=enemy.unstable)
+                else:
+                    loot = roll_loot(enemy.loot_table_key)
+                total_loot.append((enemy.name, loot))  # Attach loot to enemy name
             else:
-                loot = roll_loot(enemy.loot_table_key)
-        else:
-            loot = [] 
-
-            total_loot.extend(loot)
+                loot = []  # No loot if no loot table key
 
         typewriter(Fore.YELLOW + player.name + " has defeated " + enemy.name + "!", delay=0.1)
         typewriter(Fore.GREEN + player.name + " gains " + str(total_xp) + " XP and " + str(total_money) + " coins!", delay=0.1)
@@ -117,20 +118,22 @@ def battle_conclusion(player, enemies, mode):
     animate_title(Fore.CYAN + "BATTLE OVER!", delay=0.05)
     time.sleep(1)
 
+    # Show summary of battle
     print(center_text(Fore.WHITE + "Total XP: " + str(total_xp)))
     print(center_text(Fore.WHITE + "Current HP: " + str(player.hp) + "/" + str(player.max_hp)))
     print(center_text(Fore.WHITE + "Money: " + str(total_money)))
     print("")
     print(center_text(Fore.WHITE + "Enemies Defeated: " + ", ".join(killed_enemies)))
-    print(center_text(Fore.YELLOW + "Loot Dropped: " + ", ".join([item['name'] for item in total_loot])))
 
-    if total_loot:
-        print(center_text(Fore.GREEN + "Loot:"))
-        for item in total_loot:
-            if "Corrupted" in item['name']:
-                print(center_text(Fore.MAGENTA + "- " + item['name']))
-            else:
-                print(center_text(Fore.GREEN + "- " + item['name']))
+    if total_loot:  # Only print Loot if there is any
+        print(center_text(Fore.YELLOW + "Loot Dropped:"))
+        for enemy_name, loot in total_loot:  # Unpack the tuple (enemy_name, loot)
+            for item in loot:
+                # Display loot with the enemy name
+                if "Corrupted" in item.name:
+                    print(center_text(Fore.MAGENTA + f"- {item.name} (Dropped by {enemy_name})"))
+                else:
+                    print(center_text(Fore.GREEN + f"- {item.name} (Dropped by {enemy_name})"))
 
     print(center_text(Fore.YELLOW + "Press Enter to continue..." + Fore.RESET))
 
@@ -138,8 +141,9 @@ def battle_conclusion(player, enemies, mode):
     player.money += total_money
     check_level_up(player)
 
-    for item in total_loot:
-        player.inventory.add_item(item)
+    for enemy_name, loot in total_loot:  # Unpack loot for adding to player inventory
+        for item in loot:
+            player.inventory.add_item(item)
 
     input()
     clear_screen()
@@ -199,8 +203,12 @@ def player_turn(player, enemies, mode, bonus_ap=0):
 
         if mode == "multi":
             print(Fore.WHITE + "HP: " + str(player.hp) + " | Action Points: " + str(ap))
-            for i, enemy in enumerate(enemies):
-                print(Fore.RED + str(i + 1) + ". " + enemy.name + " - HP: " + str(enemy.hp) + "/" + str(enemy.max_hp))
+            alive_enemies = [e for e in enemies if e.hp > 0]
+            if not alive_enemies:
+                print(Fore.GREEN + "All enemies have been defeated!")
+                battle_conclusion(player, enemies, battle_mode="multi")
+            for i, enemy in enumerate(alive_enemies):
+                print(Fore.GREEN + str(i + 1) + ". " + enemy.name + " (" + str(enemy.hp) + "/" + str(enemy.max_hp) + " HP)")
         else:
             if bonus_ap > 0:
                 print(Fore.WHITE + "HP: " + str(player.hp) + " | Action Points: " + str(ap)) 
@@ -216,18 +224,34 @@ def player_turn(player, enemies, mode, bonus_ap=0):
             print("")
             time.sleep(1)
             break
+
         typewriter(Fore.YELLOW + "What will you do?")
-        print(Fore.GREEN + "1. Attack")
-        if isinstance(player.weapon, Weapon):
-            print(Fore.YELLOW + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
+        
+        if ap <= 0 and mode == "multi":
+            print(Fore.BLACK + "1. Attack  [Not enough AP]")
+            if isinstance(player.weapon, Weapon):
+                print(Fore.BLACK + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
+            else:
+                print(Fore.BLACK + "You have no weapon equipped.")
+            print(Fore.BLACK + "2. Defensive Stance  [Not enough AP]")
+            if len(player.inventory.items) > 0:
+                print(Fore.BLACK + "3. Use Item  [Not enough AP]")
+            print(Fore.BLACK + "4. View Items  [Not enough AP]")
+            print(Fore.BLACK + "5. View Character Sheet  [Not enough AP]")
+            print(Fore.BLACK + "6. Identify  [Not enough AP]")
         else:
-            print(Fore.RED + "You have no weapon equipped.")
-        print(Fore.GREEN + "2. Defensive Stance")
-        if len(player.inventory.items) > 0:
-            print(Fore.GREEN + "3. Use Item")
-        print(Fore.GREEN + "4. View Items")
-        print(Fore.GREEN + "5. View Character Sheet")
-        print(Fore.GREEN + "6. Identify")
+            print(Fore.GREEN + "1. Attack")
+            if isinstance(player.weapon, Weapon):
+                print(Fore.YELLOW + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
+            else:
+                print(Fore.RED + "You have no weapon equipped.")
+            print(Fore.GREEN + "2. Defensive Stance")
+            if len(player.inventory.items) > 0:
+                print(Fore.GREEN + "3. Use Item")
+            print(Fore.GREEN + "4. View Items")
+            print(Fore.GREEN + "5. View Character Sheet")
+            print(Fore.GREEN + "6. Identify")
+
         if mode == "multi":
             print(Fore.GREEN + "7. End Turn")
 
@@ -256,7 +280,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                                             player.weapon.attack(player, enemy)
                                 else:
                                     # Single-target weapon
-                                    player.attack(target)
+                                    player.weapon.attack(player,enemy)
                             ap -= 1
                         print("")
 
@@ -279,7 +303,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                                         time.sleep(2)
                             else:
                                 # Single-target weapon
-                                player.attack(target)
+                                player.weapon.attack(player, target)
                         ap -= 1
                         print("")
                         break
@@ -377,11 +401,22 @@ def player_turn(player, enemies, mode, bonus_ap=0):
         elif choice == "6":
             if mode == "multi":
                 for enemy in enemies:
+                    if enemy.hp <= 0:
+                        continue
                     print(Fore.CYAN + "--- Enemy: " + enemy.name)
                     print(Fore.YELLOW + "Health: " + str(enemy.hp) + "/" + str(enemy.max_hp))
+                    print(Fore.YELLOW + "Level: " + str(enemy.level))
+                    if enemy.corrupted:
+                        enemy.reveal_identity() 
+
+                    time.sleep(1) 
             else:
                 print(Fore.CYAN + "--- Enemy: " + enemies[0].name)
                 print(Fore.YELLOW + "Health: " + str(enemies[0].hp) + "/" + str(enemies[0].max_hp))
+                print(Fore.YELLOW + "Level: " + str(enemies[0].level))
+                if enemies[0].corrupted:
+                    enemies[0].reveal_identity()
+
         elif choice == "7" and mode == "multi":
             break
         else:

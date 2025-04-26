@@ -9,6 +9,7 @@ from game_data import difficulty
 class Enemy:
     def __init__(self, name, level, hp, strength, speed, intelligence, defense, weapon=None,loot_table_key="none"):
         self.name = name
+        self.real_name = name
         self.hp = hp
         self.strength = strength
         self.speed = speed
@@ -96,6 +97,19 @@ class Enemy:
             print("")
             return
         self.basic_attack(target)
+    
+    def reveal_identity(self):
+        self.name = self.real_name
+        print("")
+        print(Fore.YELLOW + "The veil lifts... it's a " + self.real_name + "!" + Fore.WHITE)
+        print("")
+
+        if self.corrupted:
+            print(Fore.RED + "\nA dark aura surrounds it... This enemy is CORRUPTED!")
+            print(Fore.MAGENTA + "The corruption has twisted its form and powers, making it far more dangerous than before!" + Fore.WHITE)
+        else:
+            print(Fore.GREEN + "This enemy appears to be normal, free of corruption." + Fore.WHITE)
+
 
 class Goblin(Enemy):
     def __init__(self, level):
@@ -243,11 +257,6 @@ class CorruptedGoblin(Enemy):
             self.rob(target)
         else:
             self.basic_attack(target)
-
-    def reveal_identity(self):
-        self.name = self.real_name
-        print(Fore.YELLOW + "The veil lifts... it's a " + self.real_name + "!" + Fore.WHITE)
-        print("")
 
     def cleanse(self):
         if self.corrupted:
@@ -419,11 +428,6 @@ class CorruptedOrc(Enemy):
             self.corrupted = False
 
             self.name = self.cleansed_name
-
-    def reveal_identity(self):
-        self.name = self.real_name
-        print(Fore.YELLOW + "The veil lifts... it's a " + self.real_name + "!" + Fore.WHITE)
-        print("")
 
     def apply_difficulty(self):
         global difficulty

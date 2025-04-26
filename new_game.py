@@ -24,7 +24,8 @@ def character_creation():
     # Difficulty selection
     typewriter(Fore.YELLOW + "Select difficulty (1-100)", delay=0.03)
     difficulty_input = input(Fore.CYAN + "> ")
-    while not difficulty_input.isdigit() or not (0 <= int(difficulty_input) <= 100):
+    while not difficulty_input.isdigit() or not (1 <= int(difficulty_input) <= 100):
+
         typewriter(Fore.RED + "Invalid input! Please choose a number between 1 and 100.", delay=0.03)
         difficulty_input = input(Fore.CYAN + "> ")
 
@@ -41,7 +42,7 @@ def character_creation():
         difficulty_color = Fore.RED
         warning_message = Fore.YELLOW + "\nWarning: Enemies will be significantly stronger and very punishing. Consider lowering difficulty if you're new.\n"
 
-    print(f"\n{difficulty_color}Selected Difficulty: {difficulty}{Style.RESET_ALL}")
+    print(difficulty_color + "\nSelected Difficulty: " + str(difficulty) + Style.RESET_ALL)
     
     # Show the warning if necessary
     if warning_message:

@@ -5,7 +5,7 @@ from item_factory import create_item
 
 loot_tables = {
     "goblin": {
-        "Goblin Tooth": 0.30,
+        "Goblin Tooth": 0.7,
         "Health Potion": 0.15
     },
     "orc": {
@@ -44,24 +44,6 @@ def roll_corrupted_loot(base_table_name, unstable=False):
     if base_table_name == "none":
         return []
 
-    loot = roll_loot(base_table_name)
-
-    for item_name, chance in corrupted_extras["generic"].items():
-        if random.random() <= chance:
-            item = create_item(item_name)
-            if item:
-                loot.append(item)
-
-    if unstable:
-        for item_name, chance in corrupted_extras["unstable"].items():
-            if random.random() <= chance:
-                item = create_item(item_name)
-                if item:
-                    loot.append(item)
-
-    return loot
-
-def roll_corrupted_loot(base_table_name, unstable=False):
     loot = roll_loot(base_table_name)
 
     for item_name, chance in corrupted_extras["generic"].items():

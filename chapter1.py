@@ -163,6 +163,7 @@ def the_village(player):
     print(Fore.CYAN + "=" * 50)
     print(Fore.GREEN + " [1] ".ljust(6) + "Investigate the Goblin")
     print(Fore.GREEN + " [2] ".ljust(6) + "Locate Villagers")
+    print(Fore.YELLOW + " [3] ".ljust(6) + "Check Inventory")
     print(Fore.CYAN + "=" * 50)
     while True:
         choice = input(Fore.YELLOW + "> ").strip()
@@ -188,6 +189,17 @@ def the_village(player):
             print("")
             time.sleep(3)
             break
+        elif choice == "3":
+            player.inventory.use_non_combat_item(player)
+            time.sleep(1)
+            print("\n" + Fore.CYAN + "=" * 50)
+            print(Fore.YELLOW + " What will you do?".center(50))
+            print(Fore.CYAN + "=" * 50)
+            print(Fore.GREEN + " [1] ".ljust(6) + "Investigate the Goblin")
+            print(Fore.GREEN + " [2] ".ljust(6) + "Locate Villagers")
+            print(Fore.YELLOW + " [3] ".ljust(6) + "Check Inventory")
+            print(Fore.CYAN + "=" * 50)
+
     typewriter(Fore.WHITE + "As you leave the village you keep thinking")
     typewriter("to yourself..." + Fore.MAGENTA + " What was motivating those goblins?")
     print("")
@@ -217,10 +229,10 @@ def the_escape(player):
 
 def the_forest(player, village_result):
     # Create Enemies
-    corrupted_orc = CorruptedOrc(4)
-    corrupted_goblin_1 = CorruptedGoblin(1)
-    corrupted_goblin_2 = CorruptedGoblin(1,True)
-    corrupted_goblin_3 = CorruptedGoblin(1)
+    corrupted_orc = CorruptedOrc(5)
+    corrupted_goblin_1 = CorruptedGoblin(2)
+    corrupted_goblin_2 = CorruptedGoblin(3,True)
+    corrupted_goblin_3 = CorruptedGoblin(2)
 
     clear_screen()
     animate_title(Fore.GREEN + "Act II - The Forest")
