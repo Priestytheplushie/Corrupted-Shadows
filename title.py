@@ -46,10 +46,11 @@ def change_text_speed():
     print(center_text("- Normal (Current) -"))
     print(center_text("- Fast -"))
     print(center_text("- Very Fast -"))
+    print(center_text("- Fastest -"))
     print(center_text("- Back to Options -"))
 
     choice = input(Fore.YELLOW + "> ").lower()
-    while choice not in ['slow', 'normal', 'fast', 'very fast', 'back to options']:
+    while choice not in ['slow', 'normal', 'fast', 'very fast', 'fastest', 'back to options']:
         print(Fore.RED + "Invalid input! Please use a valid command!\n")
         choice = input(Fore.YELLOW + "> ").lower()
 
@@ -69,6 +70,10 @@ def change_text_speed():
         text_speed = "very fast"
         print(Fore.GREEN + "Text speed set to Very Fast.")
         time.sleep(1)
+    elif choice == "fastest":
+        text_speed = "fastest"
+        print(Fore.GREEN + "Text speed set to Fastest.")
+        time.sleep(2)
     elif choice == "back to options":
         return "back_to_options" 
 

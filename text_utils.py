@@ -39,7 +39,10 @@ def typewriter(text, delay=0.05):
     elif text_speed == "fast":
         delay = 0.02
     elif text_speed == "very fast":
-        delay = 0.005
+        delay = 0.001
+    elif text_speed == "fastest":
+        delay = 0
+    
     for char in text:
         print(char, end='', flush=True)
         time.sleep(delay)
