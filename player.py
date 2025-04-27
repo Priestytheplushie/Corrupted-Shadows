@@ -188,14 +188,14 @@ class Player:
             self.defense += 1
             self.intelligence += 1
 
-            typewriter("")
-            typewriter(center_text(Fore.MAGENTA + "LEVEL UP!" + Style.RESET_ALL))
-            typewriter(center_text("You are now level " + str(self.level) + "!"))
-            typewriter(center_text("HP: " + str(self.max_hp)))
-            typewriter(center_text("Strength: " + str(self.strength)))
-            typewriter(center_text("Defense: " + str(self.defense)))
-            typewriter(center_text("Intelligence: " + str(self.intelligence)))
-            typewriter("")
+            print("")
+            animate_title(Fore.MAGENTA + "LEVEL UP!" + Style.RESET_ALL)
+            animate_title("You are now level " + str(self.level) + "!")
+            animate_title("HP: " + str(self.max_hp))
+            animate_title("Strength: " + str(self.strength))
+            animate_title("Defense: " + str(self.defense))
+            animate_title("Intelligence: " + str(self.intelligence))
+            print("")
 
             input(center_text("Press Enter to continue..."))
 

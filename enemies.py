@@ -35,11 +35,13 @@ class Enemy:
         self.hp = max(1, self.hp - random.randint(1, 5))
         self.strength = max(1, self.strength - random.randint(1, 3))
         self.defense = max(0, self.defense - random.randint(0, 2))
+        self.max_hp = self.hp
 
     def apply_regular_buffs_debuffs(self):
         if random.random() < 0.5:
             self.hp += random.randint(1, 5)
             self.strength += random.randint(1, 2)
+            self.max_hp = self.hp
         else:
             self.defense -= random.randint(0, 2)
 
@@ -47,6 +49,7 @@ class Enemy:
         self.strength += random.randint(3, 7)
         self.hp += random.randint(5, 10)
         self.defense += random.randint(2, 4)
+        self.max_hp = self.hp
 
     def apply_status(self, effect_name, duration):
         found = False
@@ -118,6 +121,7 @@ class Goblin(Enemy):
         self.strength = 5 + level
         self.speed = 10
         self.intelligence = 0
+        self.corrupted = False
         self.defense = 0
         self.max_hp = self.hp
         self.status_effects = []  
@@ -177,6 +181,7 @@ class Goblin(Enemy):
             self.hp = int(self.hp * 1.2)
             self.strength = int(self.strength * 1.3)
             self.defense = int(self.defense * 1.2)
+        self.max_hp = self.hp
 
 
 class CorruptedGoblin(Enemy):
@@ -283,6 +288,7 @@ class CorruptedGoblin(Enemy):
             self.hp = int(self.hp * 1.2)
             self.strength = int(self.strength * 1.3)
             self.defense = int(self.defense * 1.2)
+        self.max_hp = self.hp
 
 class Orc(Enemy):
     def __init__(self, level):
@@ -296,6 +302,7 @@ class Orc(Enemy):
         self.status_effects = []  
         self.weapon = None
         self.level = level
+        self.corrupted = False
         self.loot_table_key = "orc"
 
         self.apply_difficulty()
@@ -346,6 +353,8 @@ class Orc(Enemy):
             self.hp = int(self.hp * 1.2)
             self.strength = int(self.strength * 1.3)
             self.defense = int(self.defense * 1.2)
+
+        self.max_hp = self.hp
 
 class CorruptedOrc(Enemy):
     def __init__(self, level,unstable=False,corrupted=True):
@@ -443,4 +452,6 @@ class CorruptedOrc(Enemy):
             self.hp = int(self.hp * 1.2)
             self.strength = int(self.strength * 1.3)
             self.defense = int(self.defense * 1.2)
+
+        self.max_hp = self.hp
 

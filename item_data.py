@@ -15,6 +15,15 @@ item_library = {
         "damage": 10,
         "durability": 25
     },
+    "Goblin Dagger": {
+        "type": "weapon",
+        "description": (
+            "A rigid dagger crafted using a slain Goblin's Tooth"
+            "Damage: +7"
+        ),
+        "damage": 7,
+        "durability": 35
+    },
     "Goblin Tooth": {
         "type": "item",
         "description": (
@@ -29,9 +38,9 @@ item_library = {
         "description": (
             "A heavy, brutal weapon forged for the fiercest of Orc warriors.\n"
             "Deals devastating AOE damage to all enemies that oppose it\n"
-            "Damage: +25"
+            "Damage: +20"
         ),
-        "damage": 25,
+        "damage": 20,
         "durability": 10
     },
     "Health Potion": {
@@ -41,6 +50,14 @@ item_library = {
         ),
         "healing_amount": 25,
         "quantity": 1
+    },
+    "Health Potion x3": {
+        "type": "potion",
+        "description": (
+            "A simple brew which restores 25 HP"
+        ),
+        "healing_amount": 25,
+        "quantity": 3
     },
     "Cleansing Flute": {
         "type": "cleansing_flute",

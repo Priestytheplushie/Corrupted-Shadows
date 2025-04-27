@@ -54,8 +54,8 @@ def character_creation():
     typewriter(Fore.MAGENTA + "Rolling your stats...", delay=0.04)
     print()
 
-    hp = random.choice(range(50, 151, 5))
-    strength = random.randint(5, 15)
+    hp = random.choice(range(100, 251, 5))
+    strength = random.randint(10, 25)
     speed = random.randint(0, 15)
     intelligence = random.randint(50, 200)
     defense = 0

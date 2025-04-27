@@ -6,7 +6,8 @@ from item_factory import create_item
 loot_tables = {
     "goblin": {
         "Goblin Tooth": 0.7,
-        "Health Potion": 0.15
+        "Health Potion": 0.30,
+        "Goblin Dagger": 0.15
     },
     "orc": {
         "Orc's Mace": 0.05,
