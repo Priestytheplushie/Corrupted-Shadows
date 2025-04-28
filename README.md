@@ -15,7 +15,7 @@ Download the latest [Release](https://github.com/Priestytheplushie/Priestys-Ques
 - **Chapter 1 - The Corruption** *(Complete)*
   - **Act 1 - The Village** *(Complete)*
   - **Act 2 - The Forest** *(Complete)*
-    -**Mini Act - Goblin Camp** *(Complete)*
+  - **Mini Act - Goblin Camp** *(Complete)*
 - **Chapter 2 - From the Shadows** *(Coming Soon)*
   - **Act 1 - The Fallen Fist** *(Coming Soon)*
 
