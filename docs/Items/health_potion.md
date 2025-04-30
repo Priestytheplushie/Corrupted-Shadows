@@ -5,7 +5,7 @@ icon: flask-round-potion
 
 # Health Potion
 
-Health Potions are common consumables which can be used in or out of combat to restore 25 HP
+Health Potions are common consumables introduced in the `v0.1.0-chapter1a`  update which can be used in or out of combat to restore 25 HP
 
 ### Stats
 
@@ -34,4 +34,3 @@ Players start with **3** health potions by default, but there are other ways of 
 | `v0.1.2-chapter1a` | Goblins & Orcs now properly drop Health Potions |
 | `v0.2.0-chapter1`  | The player now starts with 3 Health Potions     |
 | `v0.3.0-chapter2`  | Health Potion's sell value is now 25            |
-

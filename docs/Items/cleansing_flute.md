@@ -7,7 +7,7 @@ icon: flute
 
 # Cleansing Flute
 
-The **Cleansing Flute** is a rare item which can be used to **cleanse** monsters, reducing their stats and revealing their identities.
+The **Cleansing Flute** is a rare item introduced in the `v0.1.0-chapter1a` update which can be used to **cleanse** monsters, reducing their stats and revealing their identities.
 
 ### Stats
 
