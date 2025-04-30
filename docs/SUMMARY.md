@@ -3,4 +3,4 @@
 * [Home](README.md)
 * [Items](Items.md)
   * [Iron Sword](Items/iron_sword.md)
-  * [Cleansing Flute](Items/cleansing_flute)
+  * [Cleansing Flute](Items/cleansing_flute.md)
