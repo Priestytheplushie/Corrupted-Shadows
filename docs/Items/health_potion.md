@@ -1,4 +1,4 @@
-# Hralth Potion 
+# Health Potion 
 
 Health potions are common consumables which can be consumed in or out of battle to heal 25 HP
 
