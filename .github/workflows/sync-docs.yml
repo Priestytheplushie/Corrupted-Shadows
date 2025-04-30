@@ -1,32 +1,29 @@
-name: Sync Docs
+name: Sync Main to Docs
 
 on:
   push:
     branches:
-      - main  # Trigger when code is pushed to the main branch
+      - main
 
 jobs:
-  sync-main-to-docs:
+  sync:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout main branch
-      uses: actions/checkout@v2
-      with:
-        ref: main  # Checkout the main branch to get the latest updates
+      - name: Checkout the main branch
+        uses: actions/checkout@v3
 
-    - name: Checkout docs branch
-      uses: actions/checkout@v2
-      with:
-        ref: docs  # Checkout the docs branch to update it
+      - name: Set up Git user
+        run: |
+          git config user.name "Your Name"
+          git config user.email "your-email@example.com"
 
-    - name: Sync main into docs
-      run: |
-        git config user.name "Your Name"
-        git config user.email "your-email@example.com"
+      - name: Fetch docs branch
+        run: git fetch origin docs
 
-        # Merge main into docs
-        git merge main --allow-unrelated-histories -m "Sync updates from main to docs"
-
-        # Push the updated docs branch
-        git push origin docs
+      - name: Merge main into docs
+        run: |
+          git checkout docs
+          git merge origin/main --no-ff --commit -m "Sync main to docs"
+        
+      - name: Push changes to docs
+        run: git push origin docs
