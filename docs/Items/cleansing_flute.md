@@ -1,6 +1,6 @@
 # Cleansing Flute 
 
-The Cleansing Flute is a boss reward obtained by completing a **challenging** encounter. each chapter has at least 1 obtainable Cleansing flute
+The Cleansing Flute is a rare reward only obtained by completing a **challenging** encounter. each chapter has at least 1 obtainable Cleansing flute
 
 ## Stats 
 - Durability: 5
