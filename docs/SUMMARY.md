@@ -2,4 +2,4 @@
 
 * [Home](README.md)
 * [Items](Items.md)
-  * [Iron Sword](items/iron_sword.md)
+  * [Iron Sword](Items/iron_sword.md)
