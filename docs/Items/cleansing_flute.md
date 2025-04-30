@@ -16,24 +16,34 @@ The **Cleansing Flute** is a rare item which can be used to **cleanse** monsters
 
 ### Use
 
-```
-{% raw %}
 {% hint style="warning" %}
-**Warning** Cleansing Flutes have no effect on Bosses or Corrupted Humans
+:warning:**Warning:** Cleansing Flutes have no effect on Bosses or Corrupted Humans
 {% endhint %}
-{% endraw %}
-```
 
-The Cleansing Flute can be used in combat to cleanse a target, reverting the enemy into their normal states, This has several effects
+The Cleansing Flute can be used in combat to cleanse a target, reverting a Corrupted enemy into their normal states. This has several effects
 
 * The enemies true identity is revealed
 * The enemies stats are reduced
 * `Unstable` enemies are no longer unstable
 
+Non-corrupted items may not be cleansed, and the flute will have **no effect!**
+
 ### Obtaining
 
 Cleansing flutes are very rare, only obtainable from completing difficult challenges, There is always at least 1 Cleansing Flute available to be obtained in each Chapter
 
-#### Chapter 1 - The Corruption
+<details>
 
-The Cleansing Flute can be obtained by defeating all **5** corrupted goblins in the Goblin Camp timed encounter. It can only be obtained if all 5 enemies were defeated in a Multi-Battle
+<summary>Chapter 1 - The Corruption</summary>
+
+The Cleansing Flute can be obtained by defeating all **5** Corrupted Goblins in the Goblin Camp timed encounter. It only counts if the Goblins were defeated in a **multi-battle**
+
+</details>
+
+### Version History
+
+| Version            | Change                                                |
+| ------------------ | ----------------------------------------------------- |
+| `v0.1.0-chapter1a` | Added `Cleansing Flute`                               |
+| `v0.1.1-chapter1a` | Removed `Cleansing Flute` from the starting equipment |
+| `v0.2.0-chapter1`  | Modified the Item's Lore                              |

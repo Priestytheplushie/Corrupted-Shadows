@@ -13,11 +13,15 @@ The **Iron Sword** is a starting weapon introduced in the `v0.1.0-chapter1a` upd
 * Durability: 25
 * Base Value: 100
 
+### Use
+
+If the **Iron Sword** is equipped via `Check Inventory` or `Use Item` than the player will deal an additional +10 damage when attacking. If you attack in this way, the Iron Sword loses 1 Durability
+
 ### Obtaining
 
 The Iron Sword is obtained as a **starting weapon** upon starting the game. It can also be bought from a shop for **300** coins
 
-## Item History
+## Version History
 
 | Version            | Change                                                     |
 | ------------------ | ---------------------------------------------------------- |
