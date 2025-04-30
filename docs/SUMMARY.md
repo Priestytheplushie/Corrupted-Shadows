@@ -5,3 +5,7 @@
   * [Iron Sword](Items/iron_sword.md)
   * [Cleansing Flute](Items/cleansing_flute.md)
   * [Health Potion](Items/health_potion.md)
+  * [Goblin Dagger](Items/goblin_dagger.md)
+  * [Goblin Tooth](Items/goblin_tooth.md)
+  * [Orc's Mace](Items/orc_mace.md)
+ 
