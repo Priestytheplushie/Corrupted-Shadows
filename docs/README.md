@@ -7,3 +7,6 @@ description: >-
 
 # Home
 
+## Welcome to the Corrupted Codex
+
+This is your guide to \[Corrupted Shadows]\([https://github.com/Priestytheplushie/Corrupted-Shadows/tree/main](https://github.com/Priestytheplushie/Corrupted-Shadows/tree/main))
