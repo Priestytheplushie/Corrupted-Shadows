@@ -1,33 +1,9 @@
-# Corrupted Shadows
+# Corrupted Shadows - Documentation
 
-Corrupted Shadows is a text based RPG where you explore and attempt to save a world corrupted by evil. You must leave your village behind and attempt to save the world from the spreading corruption
+Welcome to the **documentation** of Corrupted Shadows. This branch contains all of the files required for the documentation (gitbook) of the game. To see the actaul code, check out the `main` branch
 
-## In Development State
-The code right now is very scuffed as it's in development. If you decide to download this project, expect story gaps and some bugs. If you find any you can open an issue or contribute.
+## Documentation
+This branch contains all the necessary documentation related to the game’s development, including story, gameplay mechanics, and more.
 
-## Installing
-Download the latest [Release](https://github.com/Priestytheplushie/Priestys-Quest/releases) and run the included `.exe` file by double-clicking
-
-⚠️ **Note:** Windows may warn you about running unknown applications. You can safely bypass this if you trust the source (i.e., this repo).
-
-## Chapters
-
-- **Chapter 1 - The Corruption** *(Complete)*
-  - **Act 1 - The Village** *(Complete)*
-  - **Act 2 - The Forest** *(Complete)*
-  -**Mini Act - Goblin Camp** *(Complete)*
-- **Chapter 2 - From the Shadows** *(Coming Soon)*
-  - **Act 1 - The Fallen Fist** *(Coming Soon)*
-
-## Story
-After the **Great War**, the world has been in peace, until a corruption spreads from the shadows, infecting everything in it's wake. It's up to you and you alone to lift the curse and cleanse the world of the corruption
-
-## How to Play
-- Read the text and use the number keys listed to make choices
-- Make sure to equip weapons before entering combat
-- Think before you act- small choices can lead to massive consequenses
-
-## Known Issues
-- Ends after the first encounter of Act 2 (Both Paths)
-- Difficulty scaling is not fine-tuned
-- Strings are sometimes missing spaces
+## License
+This project is licensed under the MIT License. Please see the `LICENSE` file in the `main` branch for full details. [View License on GitHub](https://github.com/Priestytheplushie/Corrupted-Shadows/blob/main/LICENSE)
