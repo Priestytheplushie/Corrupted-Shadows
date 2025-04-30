@@ -12,7 +12,7 @@ Health potions can be obtained from the following:
 - Goblins
 - Orcs
 - Shops
-- Startkng Equipment
+- Starting Equipment
 - Scavenging
 
 ## Use 
