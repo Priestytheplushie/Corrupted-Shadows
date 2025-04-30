@@ -20,7 +20,7 @@ The Iron Sword can be equipped in combat in order to deal 10 damage (+ users str
 
 ## Item History
 
-| Date       | Change Description                                      |
+| Version       | Change Description                                      |
 |------------|---------------------------------------------------------|
 | v0.1.0-chapter1a | Created the item `Iron Sword` with attack damage of +25       |
 | v0.1.1-chapter1a | Nerfed `Iron Sowrd` attack damage to 10           |
