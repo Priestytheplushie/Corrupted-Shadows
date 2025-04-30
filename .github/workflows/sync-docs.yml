@@ -1,4 +1,4 @@
-name: Sync Main to Docs
+name: Sync main to docs
 
 on:
   push:
@@ -8,22 +8,28 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout the main branch
+      - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Important: ensures full history is available
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Git user
+      - name: Set up Git identity
         run: |
-          git config user.name "Your Name"
-          git config user.email "your-email@example.com"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-      - name: Fetch docs branch
-        run: git fetch origin docs
+      - name: Fetch all branches
+        run: git fetch origin
+
+      - name: Checkout docs branch
+        run: git checkout docs
 
       - name: Merge main into docs
         run: |
-          git checkout docs
-          git merge origin/main --no-ff --commit -m "Sync main to docs"
-        
-      - name: Push changes to docs
+          git merge origin/main --no-ff --commit --allow-unrelated-histories -m "Sync main to docs"
+
+      - name: Push changes
         run: git push origin docs
