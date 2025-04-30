@@ -13,3 +13,5 @@ dist/
 # Ignore main.spec file
 main.spec
 
+# Ignore .github (Docs only)
+.github/
