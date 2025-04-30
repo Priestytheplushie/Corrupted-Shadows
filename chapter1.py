@@ -83,7 +83,7 @@ def intro(player):
     typewriter("The corruption still spreads, and the ancient evil festers in the cave where the Crimson Legion fell.")
     print("")
     time.sleep(2)
-    typewriter("You are here to finish what the Legion couldn't... but are there even people left to save?")
+    typewriter("You are here to finish what the factions couldn't... but are there even people left to save?")
     print("")
     time.sleep(3)
     clear_screen()
