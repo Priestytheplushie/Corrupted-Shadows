@@ -8,4 +8,4 @@ Fueld by hatred, driven by vengeance, the corruption spread throught the world, 
 
 The world would never be the same again...
 
-And now you stand, fifty years later, here to finish what the legion couldn't, Venturing through a scarred world plegued of evil and corruption. You must cleanse the world from the ancient evil which has plegued this world for far too long... but you are all alone, and are there even people left to save?
+And now you stand, fifty years later, here to finish what the factions couldn't, Venturing through a scarred world plegued of evil and corruption. You must cleanse the world from the ancient evil which has plegued this world for far too long... but you are all alone, and are there even people left to save?
