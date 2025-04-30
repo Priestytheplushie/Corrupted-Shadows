@@ -24,3 +24,7 @@ def chapter_2(player):
     clear_screen()
 
     # Chapter Structure
+
+
+def the_fallen_fist(player):
+    pass

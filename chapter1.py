@@ -287,7 +287,7 @@ def the_forest(player, village_result):
         typewriter("the dense forest.")
         print("")
         time.sleep(2)
-        heal_player(player, 30) 
+        heal_player_precent(player, 30) 
         typewriter(Fore.WHITE+"As you contiune through the forest, the fog around you grows thick, the sense of dread from before returns, but")
         typewriter("worse than before...")
         print("")
