@@ -15,7 +15,7 @@ The **Goblin Dagger** is a semi-rare item introduced in the `v0.2.0-chapter1` up
 
 ### Use
 
-If the **Goblin Dagger** is equipped via `Check Inventory` or `Use Item` than the player will deal an additional +7 damage when attacking. If you attack in this way, the Iron Sword loses 1 Durability
+If the **Goblin Dagger** is equipped via `Check Inventory` or `Use Item` than the player will deal an additional +7 damage when attacking. If you attack in this way, the Goblin Dagger loses 1 Durability
 
 ### Obtaining
 
