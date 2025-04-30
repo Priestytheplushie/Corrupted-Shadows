@@ -16,8 +16,8 @@ Download the latest [Release](https://github.com/Priestytheplushie/Priestys-Ques
   - **Act 1 - The Village** *(Complete)*
   - **Act 2 - The Forest** *(Complete)*
   - **Mini Act - Goblin Camp** *(Complete)*
-- **Chapter 2 - From the Shadows** *(Coming Soon)*
-  - **Act 1 - The Fallen Fist** *(Coming Soon)*
+- **Chapter 2 - From the Shadows** *(In Development)*
+  - **Act 1 - The Fallen Fist** *(In Development)*
 
 ## Story
 After the **Great War**, the world has been in peace, until a corruption spreads from the shadows, infecting everything in it's wake. It's up to you and you alone to lift the curse and cleanse the world of the corruption
