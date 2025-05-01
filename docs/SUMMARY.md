@@ -6,7 +6,7 @@
   * [Cleansing Flute](Items/cleansing_flute.md)
   * [Health Potion](Items/health_potion.md)
   * [Goblin Dagger](Items/goblin_dagger.md)
-  * [Orc's Mace](items/orc_mace.md)
+  * [Orc's Mace](Items/orc_mace.md)
 * [Monsters](monsters/README.md)
   * [Goblins](monsters/goblins/README.md)
     * [Corrupted Goblins](monsters/goblins/corrupted-goblins.md)
