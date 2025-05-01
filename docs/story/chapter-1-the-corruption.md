@@ -1,7 +1,7 @@
 ---
 description: >-
   "You look out your window, The village you swore to protect is under siege!
-  You've got to get out there and do something!
+  You've got to get out there and do something!"
 icon: virus
 ---
 
@@ -12,3 +12,13 @@ icon: virus
 {% endhint %}
 
 Chapter 1 is the first story chapter in **Corrupted Shadows**. It introduces **The Corruption** and the **Iron Fist**. Chapter 1 was fully released in `v0.2.0-chapter1`.
+
+### Act I - The Village
+
+<details>
+
+<summary>Spoiler: Act I - The Village</summary>
+
+TBA
+
+</details>
