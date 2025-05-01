@@ -26,7 +26,7 @@ The Cleansing Flute can be used in combat to cleanse a target, reverting a Corru
 * The enemies stats are reduced
 * `Unstable` enemies are no longer unstable
 
-Non-corrupted items may not be cleansed, and the flute will have **no effect!**
+Non-corrupted enemies may not be cleansed, and the flute will have **no effect!**
 
 ### Obtaining
 
