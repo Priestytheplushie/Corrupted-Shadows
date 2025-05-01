@@ -63,7 +63,7 @@ def chapter_1(player):
 
 def intro(player):
     # Background
-    typewriter(Fore.WHITE + "3 years after the" + Fore.MAGENTA + " Great War" + Fore.WHITE + ", the world was slowly healing")
+    typewriter(Fore.WHITE + "50 years after the" + Fore.MAGENTA + " Great War" + Fore.WHITE + ", the world was slowly healing")
     typewriter("from the scars of battle, but one day... everything changed.")
     print("")
     time.sleep(2)
