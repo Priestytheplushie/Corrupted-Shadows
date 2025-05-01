@@ -13,6 +13,7 @@ from items import *
 from item_factory import create_item
 from game_data import *
 from utils import *
+from chapter2 import chapter_2
 
 # Color Coding
 
@@ -55,12 +56,14 @@ def chapter_1(player):
     ap_bonus = goblin_camp(player)
     encounter_result = timed_encounter(player,ap_bonus)
     ending(player, encounter_result)
+    chapter_1(player)
+
     # Extras
     chapter = 1
 
 def intro(player):
     # Background
-    typewriter(Fore.WHITE + "3 years after the" + Fore.MAGENTA + " Great War" + Fore.WHITE + ", the world was slowly healing")
+    typewriter(Fore.WHITE + "50 years after the" + Fore.MAGENTA + " Great War" + Fore.WHITE + ", the world was slowly healing")
     typewriter("from the scars of battle, but one day... everything changed.")
     print("")
     time.sleep(2)
@@ -284,7 +287,7 @@ def the_forest(player, village_result):
         typewriter("the dense forest.")
         print("")
         time.sleep(2)
-        heal_player(player, 30) 
+        heal_player_precent(player, 30) 
         typewriter(Fore.WHITE+"As you contiune through the forest, the fog around you grows thick, the sense of dread from before returns, but")
         typewriter("worse than before...")
         print("")
@@ -603,7 +606,7 @@ def ending(player, encounter_result):
         typewriter("burning. All you can hear is groaning from the inside...")
         print("")
         # End of Chapter 1
-        # Move to Chapter 2 - The Fallen Fist
+        # Move to Chapter 2 - From the Shadows
         return
     if encounter_result == "victory":
         typewriter(Fore.WHITE + "You exit the forest, but find yourself at the Iron Fist, and it looks")
@@ -611,7 +614,7 @@ def ending(player, encounter_result):
         typewriter("you can hear are groaning and grumbling from inside.")
         print("")
         # End of Chapter 1
-        # Move to Chapter 2 - The Fallen Fist
+        # Move to Chapter 2 - From the Shadows
         return
     else:
         print(Fore.RED + "An error has occurred. Please report this!")
