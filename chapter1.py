@@ -13,6 +13,7 @@ from items import *
 from item_factory import create_item
 from game_data import *
 from utils import *
+from chapter2 import chapter_2
 
 # Color Coding
 
