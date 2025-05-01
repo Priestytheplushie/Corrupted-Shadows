@@ -19,6 +19,16 @@ icon: diamond-exclamation
 * Defense: 0
 * Loot Table: "goblin"
 
+### Loot Table
+
+| Item              | Chance | Special Requirements                    |
+| ----------------- | ------ | --------------------------------------- |
+| Health Potion     | 30%    | N/A                                     |
+| Goblin Tooth      | 70%    | N/A                                     |
+| Goblin Dagger     | 15%    | N/A                                     |
+| Corrupted Essence | 25%    | Must be `Corrupted`                     |
+| Unstable Shard    | 10%    | Must be `Corrupted`, Must be `Unstable` |
+
 ### In Battle
 
 Corrupted Goblins usually attack in a **group**, with either other Corrupted Monsters, or by themselves. They are known to be very aggressive and to kill on sight

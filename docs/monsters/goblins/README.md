@@ -19,6 +19,14 @@ icon: face-smile-horns
 * Defense: 0
 * Loot Table: "goblin"
 
+### Loot Table
+
+| Item          | Chance |
+| ------------- | ------ |
+| Health Potion | 30%    |
+| Goblin Tooth  | 70%    |
+| Goblin Dagger | 15%    |
+
 ### In Battle
 
 Goblins in battle typically attack **in a group.** Goblins have a tendency to steal, in which they will take money and coins from the player.&#x20;
