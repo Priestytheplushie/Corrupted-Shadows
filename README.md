@@ -28,6 +28,5 @@ After the **Great War**, the world has been in peace, until a corruption spreads
 - Think before you act- small choices can lead to massive consequenses
 
 ## Known Issues
-- Ends after the first encounter of Act 2 (Both Paths)
 - Difficulty scaling is not fine-tuned
 - Strings are sometimes missing spaces
