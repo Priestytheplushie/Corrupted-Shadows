@@ -56,7 +56,6 @@ def chapter_1(player):
     ap_bonus = goblin_camp(player)
     encounter_result = timed_encounter(player,ap_bonus)
     ending(player, encounter_result)
-    chapter_1(player)
 
     # Extras
     chapter = 1
