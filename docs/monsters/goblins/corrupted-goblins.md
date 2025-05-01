@@ -18,6 +18,7 @@ icon: diamond-exclamation
 * Intelligence: 0
 * Defense: 0
 * Loot Table: "goblin"
+* AP Bonus: 0
 
 ### Loot Table
 
