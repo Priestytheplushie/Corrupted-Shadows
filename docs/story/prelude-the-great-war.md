@@ -47,6 +47,6 @@ The world went into madness, Villages fell, monsters ruled, and the peace earned
 
 The world would never be the same again...
 
-And now you stand, fifty years later, here to finish what the factions couldn't but, it's been so long... Are there even people left to save?
+And now you stand, years later, here to finish what the factions couldn't but, it's been so long... Are there even people left to save?
 
 </details>
