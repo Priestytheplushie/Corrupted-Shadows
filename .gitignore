@@ -13,3 +13,9 @@ dist/
 # Ignore main.spec file
 main.spec
 
+# Ignore Nuitka build directories and files
+*.dist/
+*.build/
+*.egg-info/
+*.spec
+nuitka-crash-report.xml
