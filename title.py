@@ -86,7 +86,7 @@ def title_screen():
     global tower
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "Corrupted Shadows")
-    print(center_text(Fore.WHITE+"v0.3.0-towerMVB"))
+    print(center_text(Fore.WHITE+"v0.3.1-towerMVB"))
     print(center_text(Fore.WHITE + ""))
     print(center_text("- Play -"))
     print(center_text("- Tower -"))
