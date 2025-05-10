@@ -178,7 +178,7 @@ def floor_screen(player, increase_floor=True,first_call=False):
         else:
             battle_types = ["single", "multi"]
             next_battle = random.choice(battle_types)
-
+            
     # Corruption Bar
     corruption_percent = min(max(player.corruption, 0), 100)
     bar_length = 10
