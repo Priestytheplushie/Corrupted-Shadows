@@ -140,7 +140,7 @@ def calculate_reward(player):
                 print(Fore.GREEN + f"You recovered {healing_percent}% of your max HP!" + Style.RESET_ALL)
             else:
                 if stat_boost_type == "HP":
-                    player.health += stat_boost_amount
+                    player.hp += stat_boost_amount
                 elif stat_boost_type == "Strength":
                     player.strength += stat_boost_amount
                 elif stat_boost_type == "Defense":
