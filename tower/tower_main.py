@@ -73,7 +73,7 @@ def present_battle_info(player):
         # Display Enemies
         print(Fore.YELLOW + "Enemies you must face this battle:" + Style.RESET_ALL)
         for enemy in enemies:
-            print(Fore.CYAN + f"- {enemy.__class__.__name__} (Level {enemy.level})" + Style.RESET_ALL)
+            print(Fore.CYAN + f"- {enemy.name} (Level {enemy.level})" + Style.RESET_ALL)  # Changed to enemy.name
         print("")
 
         # Menu Options

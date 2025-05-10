@@ -7,6 +7,7 @@ from items import *
 from game_data import *
 from player import Player
 from title import animate_title
+from tower.tower_items import *
 from text_utils import *
 from screens import death_screen, show_character_sheet
 from loot_tables import loot_tables, roll_corrupted_loot,roll_loot
@@ -343,6 +344,10 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                                 item.equip(player)
                                 print(Fore.GREEN + item.name + " equipped!")
                             elif isinstance(item, Potion):
+                                item.use(player)
+                                print(Fore.GREEN + item.name + " used successfully!")
+                                player.inventory.items.remove(item)  # Remove the potion from inventory after use
+                            elif isinstance(item, APPotion):
                                 item.use(player)
                                 print(Fore.GREEN + item.name + " used successfully!")
                                 player.inventory.items.remove(item)  # Remove the potion from inventory after use
