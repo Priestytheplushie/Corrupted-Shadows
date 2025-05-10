@@ -1,0 +1,300 @@
+import time
+import random
+import sys
+from player import Player
+from text_utils import *
+from utils import heal_player_precent
+from tower.tower_data import floor, tower_difficulty, tower_score, next_battle, bonus_ap
+from tower.tower_battle import battle
+from tower.tower_enemies import *
+from tower.tower_item_data import tower_library
+from item_factory import create_item
+from tower.tower_screens import *
+from screens import show_character_sheet
+
+enemies = []
+
+def setup_next_battle(player):
+    global floor, tower_difficulty, tower_score, next_battle, enemies
+    if floor == 1:
+        next_battle = "single"
+    else:
+        battle_types = ["single", "multi"]
+        next_battle = random.choice(battle_types)
+    difficulty_multipliers = {
+        "easy": 0.5,
+        "normal": 1.0,
+        "hard": 1.5,
+        "hardcore": 2
+    }
+    multiplier = difficulty_multipliers.get(tower_difficulty, 1.0)  
+    max_enemies = int(floor * multiplier)
+
+    # Ensure that the number of enemies is at least 2
+    max_enemies = max(2, max_enemies) 
+
+    amount = random.randint(2, max_enemies)
+
+    amount = min(amount, 6)  # Ensure no more than 6 enemies
+
+    # Randomize Enemies
+    enemy_types = [
+        CorruptedHuman,
+        CorruptedWarrior,
+        CorruptedMage
+    ]
+
+    enemies = []
+
+    if next_battle == "single":
+        enemy_type = random.choice(enemy_types)
+        enemy = enemy_type(level=floor)
+        enemies = [enemy]
+    elif next_battle == "multi":
+        for _ in range(amount):
+            enemy_type = random.choice(enemy_types)
+            enemy = enemy_type(level=floor)
+            enemies.append(enemy)
+
+    # Calculate tower score after adding all enemies
+    tower_score = sum(enemy.level for enemy in enemies)
+
+def present_battle_info(player):
+    global enemies
+
+    print(Fore.YELLOW + "Enemies you must face this battle:" + Style.RESET_ALL)
+    for enemy in enemies:
+        print(Fore.CYAN + f"- {enemy.__class__.__name__} (Level {enemy.level})" + Style.RESET_ALL)
+    time.sleep(2)
+
+    if player.battle_shifter:
+        reroll_choice = input(Fore.YELLOW + "You have a Battle Shifter! Would you like to re-roll this battle? (yes/no): " + Style.RESET_ALL).strip().lower()
+        if reroll_choice == "yes":
+            player.battle_shifter = False
+            print(Fore.GREEN + "Re-rolling the battle..." + Style.RESET_ALL)
+            setup_next_battle(player)
+            present_battle_info(player)
+        else:
+            print(Fore.YELLOW + "You chose not to use the Battle Shifter. Proceeding with the current battle." + Style.RESET_ALL)
+
+
+def calculate_reward(player):
+    global floor, tower_difficulty, tower_score, next_battle, enemies, bonus_ap
+
+    if not hasattr(player, 'reroll_used'):
+        player.reroll_used = 0
+    if not hasattr(player, 'battle_shifter'):
+        player.battle_shifter = False
+
+    all_items = list(tower_library.keys())
+    item_choices = random.sample(all_items, 2)
+
+    stat_boosts = ["HP", "Strength", "Defense", "Intelligence", "Speed", "AP", "Healing"]
+    stat_boost_type = random.choice(stat_boosts)
+    stat_boost_amount = 1 if stat_boost_type == "AP" else random.randint(5, 15)
+    healing_percent = random.randint(25, 50) if stat_boost_type == "Healing" else 0
+    battle_shifter = random.random() < 0.33
+
+    clear_screen()
+    print(Fore.YELLOW + Style.BRIGHT + "╔" + "═" * 58 + "╗")
+    print("║{:^58}║".format("TOWER REWARD SELECTION"))
+    print("╠" + "═" * 58 + "╣")
+
+    print("║  [1] " + Fore.GREEN + "{:<52}".format(item_choices[0]) + Style.RESET_ALL + "║")
+    print("║      " + Fore.WHITE + tower_library[item_choices[0]]["description"][:50].ljust(52) + Style.RESET_ALL + "║")
+    print("╠" + "─" * 58 + "╣")
+
+    print("║  [2] " + Fore.GREEN + "{:<52}".format(item_choices[1]) + Style.RESET_ALL + "║")
+    print("║      " + Fore.WHITE + tower_library[item_choices[1]]["description"][:50].ljust(52) + Style.RESET_ALL + "║")
+    print("╠" + "─" * 58 + "╣")
+
+    if battle_shifter:
+        print("║  [3] Battle Shifter - Re-roll the next battle         ║")
+    elif stat_boost_type == "Healing":
+        print("║  [3] Healing Boost - Restore {:>3}% of HP              ║".format(healing_percent))
+    else:
+        print("║  [3] {0} Boost - +{1} {0:<40}║".format(stat_boost_type, stat_boost_amount))
+
+    if player.reroll_used == 0:
+        print("╠" + "─" * 58 + "╣")
+        print("║  [4] Re-roll rewards (one-time use)                   ║")
+
+    print("╚" + "═" * 58 + "╝" + Style.RESET_ALL)
+
+    while True:
+        choice = input(Fore.CYAN + "Enter your choice (1-4): " + Style.RESET_ALL).strip()
+
+        if choice == "1":
+            item = create_item(item_choices[0])
+            if item:
+                player.inventory.add_item(item)
+                print(Fore.GREEN + "You received: " + item_choices[0] + "!" + Style.RESET_ALL)
+            break
+        elif choice == "2":
+            item = create_item(item_choices[1])
+            if item:
+                player.inventory.add_item(item)
+                print(Fore.GREEN + "You received: " + item_choices[1] + "!" + Style.RESET_ALL)
+            break
+        elif choice == "3":
+            if battle_shifter:
+                player.battle_shifter = True
+                print(Fore.GREEN + "You received the Battle Shifter!" + Style.RESET_ALL)
+            elif stat_boost_type == "Healing":
+                heal_player_precent(player, healing_percent)
+                print(Fore.GREEN + f"You recovered {healing_percent}% of your max HP!" + Style.RESET_ALL)
+            else:
+                if stat_boost_type == "HP":
+                    player.health += stat_boost_amount
+                elif stat_boost_type == "Strength":
+                    player.strength += stat_boost_amount
+                elif stat_boost_type == "Defense":
+                    player.defense += stat_boost_amount
+                elif stat_boost_type == "Intelligence":
+                    player.intelligence += stat_boost_amount
+                elif stat_boost_type == "Speed":
+                    player.speed += stat_boost_amount
+                elif stat_boost_type == "AP":
+                    player.ap += 1
+                print(Fore.GREEN + f"Your {stat_boost_type} increased by {stat_boost_amount}!" + Style.RESET_ALL)
+            break
+        elif choice == "4" and player.reroll_used == 0:
+            print(Fore.YELLOW + "\nRe-rolling rewards..." + Style.RESET_ALL)
+            player.reroll_used += 1
+            time.sleep(1)
+            calculate_reward(player)
+            break
+        elif choice == "4" and player.reroll_used > 0:
+            print(Fore.RED + "You have already used your re-roll!" + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "Invalid choice. Please select 1, 2, 3, or 4." + Style.RESET_ALL)
+
+def floor_screen(player, increase_floor=True):
+    from colorama import Fore, Style
+
+    global floor, tower_score, tower_difficulty, next_battle
+
+    if increase_floor:
+        floor += 1
+
+    # Corruption Bar
+    corruption_percent = min(max(player.corruption, 0), 100)
+    bar_length = 10
+    filled_length = int(bar_length * corruption_percent / 100)
+    bar = Fore.MAGENTA + "█" * filled_length + Fore.WHITE + "░" * (bar_length - filled_length)
+
+    print(Fore.MAGENTA + "╔" + "═" * 58 + "╗")
+    print(Fore.CYAN + "║" + f"  TOWER FLOOR {str(floor).rjust(2)}".center(58) + "║")
+    print(Fore.MAGENTA + "╠" + "═" * 58 + "╣")
+
+    line = ""
+    line += Fore.YELLOW + " Score: " + Fore.WHITE + str(tower_score).ljust(8)
+    line += Fore.YELLOW + "Next: " + Fore.GREEN + next_battle.capitalize().ljust(10)
+    line += Fore.RED + "HP: " + Fore.WHITE + (str(player.hp) + "/" + str(player.max_hp)).ljust(9)
+    print("║" + line.ljust(58) + "║")
+
+    print(Fore.CYAN + "║" + Fore.MAGENTA + " Corruption: [" + bar + Fore.MAGENTA + "]".ljust(56) + "║")
+    print(Fore.MAGENTA + "╠" + "═" * 58 + "╣")
+
+    options = [
+        "[1] Start Next Battle",
+        "[2] View Character Sheet",
+        "[3] Check Inventory",
+        "[4] Give Up"
+    ]
+
+    for option in options:
+        print(Fore.CYAN + "║   " + option.ljust(52) + "║")
+
+    print(Fore.MAGENTA + "╚" + "═" * 58 + "╝" + Style.RESET_ALL)
+
+def main(player):
+    global floor, tower_difficulty, tower_score, next_battle, enemies, bonus_ap
+
+    # Intro
+    clear_screen()
+    intro_lines = [
+        Fore.WHITE + "You stand before a massive tower, but something seems",
+        "off from inside. You see purple flames and other strange",
+        "effects escaping from the door. You feel terrified, but",
+        "press on. Rumors have it treasure awaits atop the tower..."
+    ]
+    for line in intro_lines:
+        typewriter(line)
+    time.sleep(2)
+
+    print("")
+
+    # Starting Equipment
+    player.inventory.add_item(create_item("Health Potion"))
+    wooden_sword = create_item("Wooden Sword")
+    player.inventory.add_item(wooden_sword)
+    player.equip_weapon(wooden_sword,True)
+
+    # Tower Loop
+    while True:
+        clear_screen()
+        floor_screen(player, False)
+
+        choice = input(Fore.CYAN + Style.BRIGHT + "Choose an option > ").strip()
+        while choice not in ["1", "2", "3", "4"]:
+            typewriter(Fore.RED + "Invalid selection. Please choose a valid option.", delay=0.03)
+            print("")
+            choice = input(Fore.CYAN + "Choose an option > ").strip()
+
+        if choice == "1":
+            setup_next_battle(player)
+            result = battle(player, enemies, next_battle, bonus_ap)
+
+            if result is False:
+                if tower_difficulty == "hardcore":
+                    death_screen()
+                    break
+                else:
+                    player.corruption += 10
+                    if player.corruption >= 100:
+                        corrupted_death_screen()
+                    else:
+                        print("")
+                        typewriter(Fore.MAGENTA + "You feel the corruption inside you worsen...")
+                        typewriter("You've got to find a cure before it's too late!\n")
+                        typewriter(Fore.MAGENTA + "Current Corruption: " + str(player.corruption) + "%")
+                        display_corruption_bar(player)
+
+            elif result is True:
+                calculate_reward(player)
+
+            heal_player_precent(player, 10)
+
+            clear_screen()
+            print(Fore.GREEN + Style.BRIGHT + "=== Floor Cleared ===\n")
+            print(Fore.WHITE + "Floor:".ljust(20) + str(floor))
+            print("Tower Difficulty:".ljust(20) + tower_difficulty.capitalize())
+            print("Tower Score:".ljust(20) + str(tower_score))
+            print("Current HP:".ljust(20) + f"{player.hp}/{player.max_hp} (Recovered 10%)")
+
+
+            if tower_difficulty != "hardcore":
+                print("Corruption:".ljust(20) + f"{player.corruption}%")
+                display_corruption_bar(player)
+
+            print("")
+            input(Fore.YELLOW + Style.BRIGHT + "Press Enter to continue to the next floor...")
+            floor += 1
+
+        elif choice == "2":
+            show_character_sheet(player)
+            time.sleep(1)
+            floor_screen(player, False)
+
+        elif choice == "3":
+            player.inventory.use_non_combat_item(player)
+            time.sleep(1)
+            floor_screen(player, False)
+
+        elif choice == "4":
+            typewriter(Fore.RED + "Are you sure you want to give up?")
+            typewriter("You won't be able to return to this Tower Run.")
+            confirm = input(Fore.CYAN + "Type 'yes' to confirm, or anything else to cancel > ").strip().lower()
+            if confirm == "yes":
+                sys.exit()

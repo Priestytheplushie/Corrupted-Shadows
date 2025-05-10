@@ -1,8 +1,13 @@
 from items import *
 from item_data import item_library
+from tower.tower_item_data import tower_library
+from game_data import tower
+from tower.tower_items import *
 
 def create_item(name):
-    data = item_library.get(name)
+    # First, check both libraries (tower_library and item_library)
+    data = tower_library.get(name) or item_library.get(name)
+    
     if not data:
         print("Item not found:", name)
         return None
@@ -15,6 +20,8 @@ def create_item(name):
         return OrcsMace(name, data["description"], data["damage"], data["durability"])
     elif item_type == "potion":
         return Potion(name, data["description"], data["healing_amount"], data["quantity"])
+    elif item_type == "ap_potion":
+        return APPotion(name, data["description"], data["ap_amount"], data["quantity"])
     elif item_type == "cleansing_flute": 
         return CleansingFlute(name, data["description"], data["uses"])
     elif item_type == "useable_item": 

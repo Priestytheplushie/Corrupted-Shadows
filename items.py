@@ -4,6 +4,7 @@ import math
 import time
 from text_utils import *
 from enemies import *
+from tower.tower_data import bonus_ap
 
 class Item:
     def __init__(self,name,description):
@@ -102,6 +103,7 @@ class Potion(Item):
         self.name = name
         self.healing_amount = healing_amount
         self.quantity = quantity
+
     def use(self, player):
         if self.quantity <= 0:
             print(Fore.RED + self.name + " is out of stock!" + Style.RESET_ALL)
@@ -109,7 +111,6 @@ class Potion(Item):
         player.hp += self.healing_amount
         self.quantity -= 1
         print(Fore.GREEN + player.name + " uses " + self.name + " and heals " + str(self.healing_amount) + " HP!" + Style.RESET_ALL)
-
 
 class UseableItem(Item): # Generic Useable Item Class to Import From
     def __init__(self, name, description, uses):
@@ -141,23 +142,37 @@ class CleansingFlute(UseableItem):
         self.durability = uses
         self.max_durability = uses
 
-    def use(self, player, targets):
-        if self.durability <= 0:
-            print(Fore.RED + self.name + " is out of uses!" + Style.RESET_ALL)
-            del self
-            return
-        
-        if not isinstance(targets, list):
-            targets = [targets]
+def use(self, player, targets):
+    if self.durability <= 0:
+        print(Fore.RED + self.name + " is out of uses!" + Style.RESET_ALL)
+        del self
+        return
 
-        for target in targets:
-            if isinstance(target, Enemy) and target.corrupted:
-                self.durability -= 1
-                print(Fore.GREEN + "The Cleansing Flute has cleansed " + target.name + "!" + Style.RESET_ALL)
-                print("")
-                target.cleanse()
-            else:
-                print(Fore.RED + "The Cleansing Flute had no effect on " + target.name + Style.RESET_ALL)
-                print("")
-                return
-        
+    if not isinstance(targets, list):
+        targets = [targets]
+
+    used = False
+
+    # Cleanse enemies
+    for target in targets:
+        if isinstance(target, Enemy) and target.corrupted:
+            print(Fore.GREEN + "The Cleansing Flute has cleansed " + target.name + "!" + Style.RESET_ALL)
+            target.cleanse()
+            used = True
+        elif isinstance(target, Enemy):
+            print(Fore.YELLOW + target.name + " is not corrupted. The flute has no effect." + Style.RESET_ALL)
+
+    # Cleanse player if needed
+    if player.corruption > 0:
+        amount = 25
+        player.corruption = max(player.corruption - amount, 0)
+        print(Fore.CYAN + "The Cleansing Flute's melody calms your soul..." + Style.RESET_ALL)
+        print("Corruption reduced by " + str(amount) + "%. Current Corruption: " + str(player.corruption) + "%")
+        used = True
+
+    # Only reduce durability if it did something
+    if used:
+        self.durability -= 1
+        print(Fore.MAGENTA + self.name + " has " + str(self.durability) + " uses remaining." + Style.RESET_ALL)
+    else:
+        print(Fore.RED + "The Cleansing Flute had no effect." + Style.RESET_ALL)

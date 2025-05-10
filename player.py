@@ -23,6 +23,11 @@ class Player:
         self.status_effects = []
         self.inventory = Inventory() 
 
+        # Arena Specific Attributes
+        self.battle_shifter = False
+        self.reroll_used = 0
+        self.corruption = 0
+
     def punch(self, enemy):
         # Punch uses base strength and weapon damage isn't factored in
         if random.random() < 0.15:  # Miss chance
@@ -68,9 +73,10 @@ class Player:
     def use_item(self, index, target=None):
         self.inventory.use_item(self, index, target)
 
-    def equip_weapon(self, weapon):
+    def equip_weapon(self, weapon,silent=False):
         self.weapon = weapon
-        print(self.weapon, "equipped.")
+        if not silent:
+            print(self.weapon, "equipped.")
 
     def unequip_weapon(self):
         self.weapon = None  
