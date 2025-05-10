@@ -72,7 +72,7 @@ tower_library = {
         "quantity": 1
     },
     "Stamina Potion": {
-        "type": "potion",
+        "type": "ap_potion",
         "description": (
             "A energizing elixir which grants +1 bonus AP pernamently"
         ),
