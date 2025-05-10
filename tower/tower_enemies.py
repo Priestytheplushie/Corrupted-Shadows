@@ -69,7 +69,7 @@ class Enemy:
         # Ensure HP is calculated as base HP + difficulty-adjusted value
         self.hp = self.base_hp + int(self.base_hp * (multiplier - 1))
         self.max_hp = self.hp
-
+        
     def calculate_stats(self):
         # Scale stats based on level
         self.hp = self.base_hp * self.level
