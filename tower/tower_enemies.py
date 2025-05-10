@@ -52,23 +52,15 @@ class Enemy:
             "hardcore": 2.0
         }
 
-        # Apply the difficulty multiplier to the enemy's level
-        level_multiplier = difficulty_multipliers.get(difficulty, 1.0)
-
-        # Calculate the new level
-        adjusted_level = int(self.level * level_multiplier)
-
-        # Ensure the level doesn't go below 1
-        adjusted_level = max(1, adjusted_level)
-
-        self.level = adjusted_level
-
-        # Apply the difficulty multiplier to the enemy's base stats
+        # Get the difficulty multiplier
         multiplier = difficulty_multipliers.get(difficulty, 1.0)
 
-        # Ensure HP is calculated as base HP + difficulty-adjusted value
-        self.hp = self.base_hp + int(self.base_hp * (multiplier - 1))
-        self.max_hp = self.hp
+        # Scale base stats by the difficulty multiplier
+        self.base_hp = int(self.base_hp * multiplier)
+        self.base_strength = int(self.base_strength * multiplier)
+        self.base_defense = int(self.base_defense * multiplier)
+        self.base_speed = int(self.base_speed * multiplier)
+        self.base_intelligence = int(self.base_intelligence * multiplier)
         
     def calculate_stats(self):
         # Scale stats based on level
