@@ -15,12 +15,7 @@ from screens import show_character_sheet
 enemies = []
 
 def setup_next_battle(player):
-    global floor, tower_difficulty, tower_score, next_battle, enemies
-    if floor == 1:
-        next_battle = "single"
-    else:
-        battle_types = ["single", "multi"]
-        next_battle = random.choice(battle_types)
+    global floor, tower_difficulty, tower_score, next_battle, enemies, next_battle
     difficulty_multipliers = {
         "easy": 0.5,
         "normal": 1.0,
@@ -169,13 +164,20 @@ def calculate_reward(player):
         else:
             print(Fore.RED + "Invalid choice. Please select 1, 2, 3, or 4." + Style.RESET_ALL)
 
-def floor_screen(player, increase_floor=True):
+def floor_screen(player, increase_floor=True,first_call=False):
     from colorama import Fore, Style
 
     global floor, tower_score, tower_difficulty, next_battle
 
     if increase_floor:
         floor += 1
+
+    if first_call:
+        if floor == 1:
+            next_battle = "single"
+        else:
+            battle_types = ["single", "multi"]
+            next_battle = random.choice(battle_types)
 
     # Corruption Bar
     corruption_percent = min(max(player.corruption, 0), 100)
@@ -234,7 +236,7 @@ def main(player):
     # Tower Loop
     while True:
         clear_screen()
-        floor_screen(player, False)
+        floor_screen(player, False,True)
 
         choice = input(Fore.CYAN + Style.BRIGHT + "Choose an option > ").strip()
         while choice not in ["1", "2", "3", "4"]:
