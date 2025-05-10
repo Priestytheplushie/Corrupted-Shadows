@@ -55,22 +55,55 @@ def setup_next_battle(player):
     tower_score = sum(enemy.level for enemy in enemies)
 
 def present_battle_info(player):
-    global enemies
+    global enemies, bonus_ap
 
-    print(Fore.YELLOW + "Enemies you must face this battle:" + Style.RESET_ALL)
-    for enemy in enemies:
-        print(Fore.CYAN + f"- {enemy.__class__.__name__} (Level {enemy.level})" + Style.RESET_ALL)
-    time.sleep(2)
+    while True:
+        clear_screen()
 
-    if player.battle_shifter:
-        reroll_choice = input(Fore.YELLOW + "You have a Battle Shifter! Would you like to re-roll this battle? (yes/no): " + Style.RESET_ALL).strip().lower()
-        if reroll_choice == "yes":
-            player.battle_shifter = False
-            print(Fore.GREEN + "Re-rolling the battle..." + Style.RESET_ALL)
-            setup_next_battle(player)
-            present_battle_info(player)
+        # Display Player Info
+        print(Fore.YELLOW + "Player Info:" + Style.RESET_ALL)
+        weapon = player.weapon.name if player.weapon else "None"
+        durability = player.weapon.durability if player.weapon else "N/A"
+        print(Fore.CYAN + f"- Name: {player.name}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"- HP: {player.hp}/{player.max_hp}" + Style.RESET_ALL)
+        print(Fore.CYAN + f"- Weapon: {weapon} (Durability: {durability})" + Style.RESET_ALL)
+        print(Fore.CYAN + f"- Bonus AP: {bonus_ap}" + Style.RESET_ALL)
+        print("")
+
+        # Display Enemies
+        print(Fore.YELLOW + "Enemies you must face this battle:" + Style.RESET_ALL)
+        for enemy in enemies:
+            print(Fore.CYAN + f"- {enemy.__class__.__name__} (Level {enemy.level})" + Style.RESET_ALL)
+        print("")
+
+        # Menu Options
+        print(Fore.CYAN + "What would you like to do?")
+        print("[1] Ready Up for Battle")
+        print("[2] Check Inventory")
+        print("[3] View Character Sheet")
+        if player.battle_shifter:
+            print("[4] Use Battle Shifter (Re-roll the battle)")
+
+        choice = input(Fore.YELLOW + "Choose an option: " + Style.RESET_ALL).strip()
+
+        if choice == "1":
+            print(Fore.GREEN + "You ready yourself for the battle!" + Style.RESET_ALL)
+            time.sleep(1)
+            break  # Exit the loop and proceed to the battle
+        elif choice == "2":
+            player.inventory.use_non_combat_item(player)
+        elif choice == "3":
+            show_character_sheet(player)
+        elif choice == "4" and player.battle_shifter:
+            print(Fore.GREEN + "Using the Battle Shifter to re-roll the battle..." + Style.RESET_ALL)
+            player.battle_shifter = False  # Mark the Battle Shifter as used
+            setup_next_battle(player)  # Re-roll the battle
+            time.sleep(1)
         else:
-            print(Fore.YELLOW + "You chose not to use the Battle Shifter. Proceeding with the current battle." + Style.RESET_ALL)
+            print(Fore.RED + "Invalid choice. Please select a valid option." + Style.RESET_ALL)
+            time.sleep(1)
+
+    return True  # Indicate that the player is ready for the battle
 
 
 def calculate_reward(player):
@@ -96,11 +129,13 @@ def calculate_reward(player):
     print("╠" + "═" * 58 + "╣")
 
     print("║  [1] " + Fore.GREEN + "{:<52}".format(item_choices[0]) + Style.RESET_ALL + "║")
-    print("║      " + Fore.WHITE + tower_library[item_choices[0]]["description"][:50].ljust(52) + Style.RESET_ALL + "║")
+    for line in tower_library[item_choices[0]]["description"].split("\n"):
+        print("║      " + Fore.WHITE + line.ljust(52) + Style.RESET_ALL + "║")
     print("╠" + "─" * 58 + "╣")
 
     print("║  [2] " + Fore.GREEN + "{:<52}".format(item_choices[1]) + Style.RESET_ALL + "║")
-    print("║      " + Fore.WHITE + tower_library[item_choices[1]]["description"][:50].ljust(52) + Style.RESET_ALL + "║")
+    for line in tower_library[item_choices[1]]["description"].split("\n"):
+        print("║      " + Fore.WHITE + line.ljust(52) + Style.RESET_ALL + "║")
     print("╠" + "─" * 58 + "╣")
 
     if battle_shifter:
@@ -163,6 +198,8 @@ def calculate_reward(player):
             print(Fore.RED + "You have already used your re-roll!" + Style.RESET_ALL)
         else:
             print(Fore.RED + "Invalid choice. Please select 1, 2, 3, or 4." + Style.RESET_ALL)
+
+    time.sleep(2)
 
 def floor_screen(player, increase_floor=True,first_call=False):
     from colorama import Fore, Style
@@ -246,6 +283,7 @@ def main(player):
 
         if choice == "1":
             setup_next_battle(player)
+            present_battle_info(player)  # Display enemies and allow preparation
             result = battle(player, enemies, next_battle, bonus_ap)
 
             if result is False:
