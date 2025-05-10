@@ -3,6 +3,7 @@ import sys
 import time
 from colorama import Fore
 from new_game import character_creation
+from tower.tower_creation import create_tower_run
 from text_utils import animate_title, center_text, clear_screen
 from game_data import * 
 
@@ -82,21 +83,26 @@ def change_text_speed():
 
 
 def title_screen():
+    global tower
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "Corrupted Shadows")
+    print(center_text(Fore.WHITE+"v0.3.0-towerMVB"))
     print(center_text(Fore.WHITE + ""))
     print(center_text("- Play -"))
+    print(center_text("- Tower -"))
     print(center_text("- Credits -"))
     print(center_text("- Options -"))
     print(center_text("- Quit -"))
     
     option = input(Fore.YELLOW + "> ").lower()
-    while option not in ['play', 'credits', 'options', 'quit']:
+    while option not in ['play', 'tower', 'credits', 'options', 'quit']:
         print(Fore.RED + "Invalid input! Please use a valid command!\n")
         option = input(Fore.YELLOW + "> ").lower()
 
     if option == "play":
         return character_creation()  
+    elif option == "tower":
+        return create_tower_run()
     elif option == "credits":
         credits_screen()
     elif option == "options":

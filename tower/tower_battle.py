@@ -10,6 +10,7 @@ from title import animate_title
 from text_utils import *
 from screens import death_screen, show_character_sheet
 from loot_tables import loot_tables, roll_corrupted_loot,roll_loot
+from tower.tower_data import tower_difficulty, floor, tower_score
 from strings import (
     player_attacks_first_message,
     enemy_attacks_first_message,
@@ -22,76 +23,53 @@ from strings import (
 )
 
 turn = 1
-break_loop = False
 
 def check_level_up(player):
     player.level_up()
 
-def get_loot(enemies, battle_mode='single'):
-    loot = []
-    
-    if battle_mode == 'single' and len(enemies) == 1:
-        enemy_type = enemies[0]
-        loot += roll_loot(enemy_type)
-    
-    elif battle_mode == 'multi':
-        for enemy in enemies:
-            loot += roll_loot(enemy)
-    
-    return loot
-
-def calculate_money(enemy, difficulty):
-    base_money = 10
-    level_multiplier = enemy.level * 5
-    difficulty_multiplier = 1 + (difficulty / 100)
-    random_bonus = random.randint(0, 20)
-    money = (base_money + level_multiplier) * difficulty_multiplier + random_bonus
-    return round(money)
-
 def calculate_xp(enemy, player):
+    global tower_difficulty, floor, tower_score
     base_xp = 50
     level_difference = enemy.level - player.level
 
-    # If the enemy is stronger, increase XP reward
+    # Difficulty multipliers
+    difficulty_multipliers = {
+        "Easy": 0.75,
+        "Normal": 1.0,
+        "Hard": 1.5,
+        "Hardcore": 2.0
+    }
+
+    multiplier = difficulty_multipliers.get(tower_difficulty.capitalize(), 1.0)
+
+    # Level-based XP adjustment
     level_multiplier = (enemy.level * 2) + (level_difference * 5)
-    
-    # Prevent XP rewards from becoming negative or zero if the player is much higher level than the enemy
     level_multiplier = max(level_multiplier, 10)
-    
-    xp = base_xp + level_multiplier
-    return xp
+
+    # Floor and score bonuses
+    floor_bonus = floor * 2
+    score_bonus = tower_score // 10
+
+    total_xp = (base_xp + level_multiplier + floor_bonus + score_bonus) * multiplier
+    return int(total_xp)
+
 
 def battle_conclusion(player, enemies, mode):
     clear_screen()
-    global difficulty
-    result = "Victory"
     total_xp = 0
-    total_money = 0
     killed_enemies = []
-    total_loot = []
 
     if mode == "multi":
         for enemy in enemies:
             if enemy.hp <= 0:
                 killed_enemies.append(enemy.name)
                 total_xp += calculate_xp(enemy, player)
-                total_money += calculate_money(enemy, difficulty)
-
-                if enemy.corrupted:
-                    loot = roll_corrupted_loot(enemy.name, unstable=enemy.unstable)
-                else:
-                    loot = roll_loot(enemy.name)
-
-                # Append loot with the enemy name to associate the loot with the specific enemy
-                total_loot.append((enemy.name, loot))  # Tuple (enemy_name, loot)
 
         total_xp += int(total_xp * 0.25)
-        total_money += int(total_money * 0.25)
 
         typewriter(Fore.YELLOW + player.name + " has defeated the following enemies:", delay=0.1)
         for enemy in killed_enemies:
             print(Fore.GREEN + "- " + enemy)
-        typewriter(Fore.GREEN + player.name + " gains " + str(total_xp) + " XP and " + str(total_money) + " coins!", delay=0.1)
 
         enemies = [e for e in enemies if e.hp > 0]
     else:  # Single battle mode
@@ -99,20 +77,8 @@ def battle_conclusion(player, enemies, mode):
         if enemy.hp <= 0:
             killed_enemies.append(enemy.name)
             total_xp += calculate_xp(enemy, player)
-            total_money += calculate_money(enemy, difficulty)
-
-            # Roll loot for single battles as well
-            if enemy.loot_table_key != "none":
-                if enemy.corrupted:
-                    loot = roll_corrupted_loot(enemy.loot_table_key, unstable=enemy.unstable)
-                else:
-                    loot = roll_loot(enemy.loot_table_key)
-                total_loot.append((enemy.name, loot))  # Attach loot to enemy name
-            else:
-                loot = []  # No loot if no loot table key
 
         typewriter(Fore.YELLOW + player.name + " has defeated " + enemy.name + "!", delay=0.1)
-        typewriter(Fore.GREEN + player.name + " gains " + str(total_xp) + " XP and " + str(total_money) + " coins!", delay=0.1)
 
     time.sleep(1)
     clear_screen()
@@ -122,33 +88,17 @@ def battle_conclusion(player, enemies, mode):
     # Show summary of battle
     print(center_text(Fore.WHITE + "Total XP: " + str(total_xp)))
     print(center_text(Fore.WHITE + "Current HP: " + str(player.hp) + "/" + str(player.max_hp)))
-    print(center_text(Fore.WHITE + "Money: " + str(total_money)))
     print("")
     print(center_text(Fore.WHITE + "Enemies Defeated: " + ", ".join(killed_enemies)))
 
-    if total_loot:  # Only print Loot if there is any
-        print(center_text(Fore.YELLOW + "Loot Dropped:"))
-        for enemy_name, loot in total_loot:  # Unpack the tuple (enemy_name, loot)
-            for item in loot:
-                # Display loot with the enemy name
-                if "Corrupted" in item.name:
-                    print(center_text(Fore.MAGENTA + f"- {item.name} (Dropped by {enemy_name})"))
-                else:
-                    print(center_text(Fore.GREEN + f"- {item.name} (Dropped by {enemy_name})"))
 
     print(center_text(Fore.YELLOW + "Press Enter to continue..." + Fore.RESET))
 
     player.xp += total_xp
-    player.money += total_money
     check_level_up(player)
-
-    for enemy_name, loot in total_loot:  # Unpack loot for adding to player inventory
-        for item in loot:
-            player.inventory.add_item(item)
 
     input()
     clear_screen()
-    return result
 
 def calculate_ap_bonus(player_speed, enemy_speeds):
     total_enemy_speed = sum(enemy_speeds)
@@ -187,7 +137,7 @@ def enemy_turn(player, enemies, mode):
                 enemies[0].choose_action(player)
 
 def player_turn(player, enemies, mode, bonus_ap=0):
-    global turn, break_loop
+    global turn
     status_ticked = False
     if mode == "multi":
         ap = math.ceil(len(enemies) / 2)
@@ -210,7 +160,6 @@ def player_turn(player, enemies, mode, bonus_ap=0):
             alive_enemies = [e for e in enemies if e.hp > 0]  # Recalculate alive enemies
             
             if not alive_enemies:
-                break_loop = True
                 print(Fore.GREEN + "All enemies have been defeated!")
                 battle_conclusion(player, enemies, mode="multi")
                 break  # End loop after conclusion (optional if battle_conclusion exits the loop)
@@ -526,9 +475,7 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
         enemy_turn(player, enemies, battle_mode)
 
     if player.hp <= 0:
-        death_screen()
         return False
     else:
-        if break_loop == False:
-            battle_conclusion(player, enemies, battle_mode)
-            return True
+        battle_conclusion(player, enemies, battle_mode)
+        return True
