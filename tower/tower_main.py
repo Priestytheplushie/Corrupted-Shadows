@@ -301,6 +301,12 @@ def main(player):
                         typewriter(Fore.MAGENTA + "Current Corruption: " + str(player.corruption) + "%")
                         display_corruption_bar(player)
 
+                    heal_player_precent(player, 10)
+                    time.sleep(2)
+                    typewriter(Fore.RED + "You have been defeated! You must try again.")
+                    print("")
+                    input(Fore.YELLOW + Style.BRIGHT + "Press Enter to try again...")
+
             elif result is True:
                 calculate_reward(player)
 
