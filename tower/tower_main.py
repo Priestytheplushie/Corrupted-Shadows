@@ -185,7 +185,7 @@ def calculate_reward(player):
                 elif stat_boost_type == "Speed":
                     player.speed += stat_boost_amount
                 elif stat_boost_type == "AP":
-                    player.ap += 1
+                    bonus_ap += 1
                 print(Fore.GREEN + f"Your {stat_boost_type} increased by {stat_boost_amount}!" + Style.RESET_ALL)
             break
         elif choice == "4" and player.reroll_used == 0:
