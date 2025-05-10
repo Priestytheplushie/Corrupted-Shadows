@@ -63,9 +63,11 @@ class Enemy:
 
         self.level = adjusted_level
 
-        # Adjust HP based on the new difficulty level
-        self.hp = max(self.base_hp * self.level, self.base_hp * 5)  # Ensure HP isn't too low
-        self.max_hp = self.hp  # Set max HP based on adjusted HP
+        # Apply the difficulty multiplier to the enemy's base stats
+        multiplier = difficulty_multipliers.get(difficulty, 1.0)
+        self.base_hp = int(self.base_hp * multiplier)  # Scale base HP
+        self.hp = max(self.base_hp * self.level, self.base_hp * 5)  # Recalculate HP
+        self.max_hp = self.hp
 
     def calculate_stats(self):
         self.hp = self.hp
