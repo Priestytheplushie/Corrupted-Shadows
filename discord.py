@@ -13,7 +13,7 @@ def connect_to_discord():
     except Exception:
         pass
 
-def update_presence(state, details, large_image="corrupted_shadows", large_text="Corrupted Shadows - v0.4.0", small_image=None, small_text=None):
+def update_presence(state, details, large_image="corrupted_shadows", large_text="Corrupted Shadows - v0.4.1", small_image=None, small_text=None):
     """
     Update the Discord Rich Presence dynamically.
 

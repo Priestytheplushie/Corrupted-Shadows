@@ -101,7 +101,7 @@ def title_screen():
     update_presence("In the Title Screen", discord_splash)
 
     print(center_text(Fore.YELLOW + splash))
-    print(center_text(Fore.WHITE + "v0.4.0"))
+    print(center_text(Fore.WHITE + "v0.4.1"))
     print(center_text(""))
     print(center_text("- Play -"))
     print(center_text("- Tower -"))
