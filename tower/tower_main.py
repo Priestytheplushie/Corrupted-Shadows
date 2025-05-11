@@ -352,11 +352,11 @@ def main(player):
 
             setup_next_battle(player)
             present_battle_info(player)  # Display enemies and allow preparation
+            top_score = tower_score
+            tower_score = previous_score
             result = battle(player, enemies, next_battle, bonus_ap)
 
             if result is False:
-                # Reset the score to the previous value if the player loses
-                tower_score = previous_score
 
                 if tower_difficulty == "hardcore":
                     death_screen()
@@ -380,6 +380,7 @@ def main(player):
                     continue
 
             elif result is True:
+                tower_score = top_score
                 calculate_reward(player)
 
             heal_player_precent(player, 10)
