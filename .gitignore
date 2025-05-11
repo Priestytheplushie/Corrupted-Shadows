@@ -6,9 +6,9 @@
 *.code-workspace
 
 # Ignore build directories
-main.build/
-main.dist/
-dist/
+**/build/
+**/*.dist/
+**/*.egg-info/
 
 # Ignore main.spec file
 main.spec
@@ -19,3 +19,9 @@ main.spec
 *.egg-info/
 *.spec
 nuitka-crash-report.xml
+
+# Ignore game icon (assuming the icon is in the root directory)
+game_icon.ico
+
+# Ignore any other specific file or folder you want (like the 'dist' folder)
+dist/

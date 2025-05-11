@@ -10,8 +10,8 @@ def connect_to_discord():
     """Connect to Discord Rich Presence."""
     try:
         rpc.connect()
-    except Exception as e:
-        print(f"Failed to connect to Discord: {e}")
+    except Exception:
+        pass
 
 def update_presence(state, details, large_image="corrupted_shadows", large_text="Corrupted Shadows - v0.4.0", small_image=None, small_text=None):
     """
@@ -41,19 +41,12 @@ def update_presence(state, details, large_image="corrupted_shadows", large_text=
             presence_data["small_text"] = small_text
 
         rpc.update(**presence_data)
-    except Exception as e:
-        print(f"Failed to update Discord Rich Presence: {e}")
+    except Exception:
+        pass
 
 def disconnect_from_discord():
     """Disconnect from Discord Rich Presence."""
     try:
         rpc.close()
-    except Exception as e:
-        print(f"Failed to disconnect from Discord: {e}")
-
-def disconnect_from_discord():
-    """Disconnect from Discord Rich Presence."""
-    try:
-        rpc.close()
-    except Exception as e:
-        print(f"Failed to disconnect from Discord: {e}")
+    except Exception:
+        pass
