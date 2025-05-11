@@ -258,7 +258,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
             print(Fore.GREEN + "5. View Character Sheet")
             print(Fore.GREEN + "6. Identify")
 
-        if mode == "multi":
+        if mode == "multi" or (mode == "single" and enemies[0].hp <= 0):
             print(Fore.GREEN + "7. End Turn")
 
         choice = input(Fore.YELLOW + "> ").strip().lower()
@@ -409,7 +409,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                 if enemy.corrupted:
                     enemy.reveal_identity()
 
-        elif choice == "7" and mode == "multi":
+        elif choice == "7" and mode == "multi" or (mode == "single" and enemies[0].hp <= 0):
             break
 
         else:
