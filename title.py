@@ -7,6 +7,8 @@ from tower.tower_creation import create_tower_run
 from text_utils import animate_title, center_text, clear_screen
 from game_data import * 
 from discord import connect_to_discord, update_presence, disconnect_from_discord
+import random
+from strings import splash_messages, get_random_splash
 
 def credits_screen():
     update_presence(
@@ -96,13 +98,17 @@ def change_text_speed():
 
     return "text_speed_changed"  
 
-
-
 def title_screen():
-    update_presence("In the Title Screen", "Browsing Menus")
     global tower
     os.system('cls' if os.name == 'nt' else 'clear')
+
     animate_title(Fore.MAGENTA + "Corrupted Shadows")
+
+    splash, discord_splash = get_random_splash()
+    update_presence("In the Title Screen", discord_splash)
+
+    print(center_text(Fore.YELLOW + splash))  # <-- Display splash message
+
     print(center_text(Fore.WHITE + "v0.4.0"))
     print(center_text(Fore.WHITE + ""))
     print(center_text("- Play -"))
@@ -117,17 +123,15 @@ def title_screen():
         option = input(Fore.YELLOW + "> ").lower()
 
     if option == "play":
-        return character_creation()  # Returns (player, False)
+        return character_creation()
     elif option == "tower":
-        return create_tower_run()  # Returns (player, True)
+        return create_tower_run()
     elif option == "credits":
         credits_screen()
-        return title_screen()  # Return to the title screen after credits
+        return title_screen()
     elif option == "options":
         result = display_options_menu()
-        if result == "back_to_main_menu":
-            return title_screen()  # Return to the title screen after options
-        elif result == "text_speed_changed":
-            return title_screen()  # Return to the title screen after changing text speed
+        if result in ["back_to_main_menu", "text_speed_changed"]:
+            return title_screen()
     elif option == "quit":
         sys.exit()

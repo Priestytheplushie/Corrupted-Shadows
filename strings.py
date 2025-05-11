@@ -192,3 +192,72 @@ def multi_battle_random_initiative(player, enemies):
     ]
     return random.choice(messages)
 
+splash_messages = [
+    "Now with 100% more corruption!",
+    "What do I put here?",
+    "Check out my GitHub!",
+    "This game is still in development.",
+    "What is 1+1?",
+    "Made by Priesty!",
+    "Launcher by Donut!",
+    "I wasted so much time on this.",
+    "No art required!",
+    "Peak gameplay?",
+    "No one can beat Floor 50 of the Tower!",
+    "Made by the worst coder in the world.",
+    "XP is nerfed!",
+    "Who is Priesty anyways?",
+    "This game is ass.",
+    "I lost my sanity making this",
+    '"Python sucks for gamedev" - Donut',
+    "Who the hell are you?",
+    "Not a virus, Ignore Windows",
+    "I ran out of ideas...",
+    "Fear the shadows!",
+    '"Turn based combat sucks" - Lavar',
+    "Think before you act!",
+    "Was that intended? Well it was now...",
+    "Don't look at the commit history...",
+    "Get your Cleansing Flute Today!",
+    "Can you even call this a game?",
+    "This game is the illusion of choice",
+    "What even is this game?",
+    "I can't spel",
+    "Will this game ever be finished?",
+    "10% good code, 90% shitty code",
+    "Behave Yourself",
+    "99% chance of a crash!",
+    "What are you aiming at?",
+    "Damage is nerfed by 400%!",
+    "Git gud",
+    "Play this game if you have free will",
+    "Is it a bug? or is it a feature?",
+    "New Update!",
+    "Was it a bug? or was it the corruption?",
+    "A swing and a miss!",
+    "You can't escape the shadows!",
+    "The shadows are always watching!",
+    "That Goblin will remember that...",
+    "Do people even read this?",
+    "Made with love... and hate.",
+    "Made with Python!",
+    "No cheating (Janix)",
+    "sys.quit(0)",
+    "These are pretty random",
+    "This isn't creative at all",
+]
+
+
+
+def get_random_splash():
+    splash = random.choice(splash_messages)
+
+    # Remove surrounding quotes if any
+    if splash.startswith('"') and splash.endswith('"'):
+        stripped = splash[1:-1]
+    else:
+        stripped = splash
+
+    discord_splash = f'"{stripped}"'  # Add clean quotes
+
+    return splash, discord_splash

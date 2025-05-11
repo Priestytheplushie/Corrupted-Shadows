@@ -16,9 +16,11 @@ from chapter1 import *
 from tower.tower_main import main
 from tower.tower_screens import corrupted_death_screen
 from discord import connect_to_discord, update_presence, disconnect_from_discord
-import threading
 
-connect_to_discord()
+try:
+    connect_to_discord()
+except Exception as e:
+    print("Discord connection failed:", e)
 
 player, is_tower_run = title_screen()
 
