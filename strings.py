@@ -245,6 +245,19 @@ splash_messages = [
     "sys.quit(0)",
     "These are pretty random",
     "This isn't creative at all",
+    "Read the README!",
+    "Some issues will never be resolved.",
+    "Running out of ideas...",
+    "Share with your friends!",
+    "Laugh at my terrible code!",
+    "Buy an Iron Sword, it could save your life!",
+    "The building is burning!",
+    "Choose your side: Legion or Fist",
+    "Contribute to the game on GitHub!",
+    "Don't look directly at the bugs!",
+    "Read the credits!",
+    "Use your AP wisely!",
+    "The shadows never sleep!",
 ]
 
 
