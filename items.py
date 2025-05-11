@@ -63,8 +63,8 @@ class Weapon(Item):
 
         # Display attack details
         print(user.name + " attacks with " + self.name + ", dealing " + str(total_damage) + " damage to " + target.name + "!")
-        if target.defense > 0:
-            print(Fore.LIGHTBLACK_EX + "(Reduced by defense)" + Fore.WHITE)
+        if target.defense < 0:
+            print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(total_damage) + " by defense)" + Fore.WHITE)
         print("")
         print(target.name + " remaining HP: " + str(target.hp))
         print("")
@@ -120,8 +120,8 @@ class OrcsMace(Weapon):
 
             # Display attack details
             print(user.name + " smashes " + target.name + " with " + self.name + ", dealing " + str(total_damage) + " damage!")
-            if target.defense > 0:
-                print(Fore.LIGHTBLACK_EX + "(Reduced by defense)" + Fore.WHITE)
+            if target.defense < 0:
+                print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(total_damage) + " by defense)" + Fore.WHITE)
             print("")
             print(target.name + " remaining HP: " + str(target.hp))
             print("")

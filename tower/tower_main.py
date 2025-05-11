@@ -339,7 +339,7 @@ def main(player):
         state=f"Tower - Floor {floor}",
         details=f"Next Battle: {next_battle.capitalize()} | Score: {tower_score}",
         )
-
+        player.reroll_used = 0
         choice = input(Fore.CYAN + Style.BRIGHT + "Choose an option > ").strip()
         while choice not in ["1", "2", "3", "4"]:
             typewriter(Fore.RED + "Invalid selection. Please choose a valid option.", delay=0.03)
@@ -347,11 +347,17 @@ def main(player):
             choice = input(Fore.CYAN + "Choose an option > ").strip()
 
         if choice == "1":
+            # Store the current score before the battle
+            previous_score = tower_score
+
             setup_next_battle(player)
             present_battle_info(player)  # Display enemies and allow preparation
             result = battle(player, enemies, next_battle, bonus_ap)
 
             if result is False:
+                # Reset the score to the previous value if the player loses
+                tower_score = previous_score
+
                 if tower_difficulty == "hardcore":
                     death_screen()
                     break
@@ -371,6 +377,7 @@ def main(player):
                     typewriter(Fore.RED + "You have been defeated! You must try again.")
                     print("")
                     input(Fore.YELLOW + Style.BRIGHT + "Press Enter to try again...")
+                    continue
 
             elif result is True:
                 calculate_reward(player)

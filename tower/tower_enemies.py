@@ -57,30 +57,44 @@ class Enemy:
 
     def adjust_for_difficulty(self):
         global tower_difficulty
-        # Difficulty multipliers for stat scaling
-        difficulty_multipliers = {
-            "Easy": 0.75,
-            "Normal": 1.0,
-            "Hard": 1.5,
-            "Hardcore": 2.0
+
+        # Use percentage values for easier scaling
+        difficulty_settings = {
+            "Easy": {"multiplier": 75, "rounding": "down"},
+            "Normal": {"multiplier": 100, "rounding": "normal"},
+            "Hard": {"multiplier": 125, "rounding": "up"},
+            "Hardcore": {"multiplier": 150, "rounding": "up"}
         }
 
-        # Get the difficulty multiplier from tower_difficulty
-        self.difficulty_multiplier = difficulty_multipliers.get(tower_difficulty.capitalize(), 1.0)
+        setting = difficulty_settings.get(tower_difficulty.capitalize(), {"multiplier": 100, "rounding": "normal"})
+        self.difficulty_multiplier = setting["multiplier"]
+        self.rounding_method = setting["rounding"]
+
 
     def calculate_stats(self):
         global floor
 
-        # Scale stats based on level, floor, and difficulty
-        floor_multiplier = 1 + (floor * 0.1)  # Increase stats by 10% per floor
-        self.hp = max(1, int((self.base_hp + self.level) * floor_multiplier * self.difficulty_multiplier))  # Ensure HP is at least 1
-        self.strength = int((self.base_strength + self.level) * floor_multiplier * self.difficulty_multiplier)
-        self.defense = int((self.base_defense + self.level) * floor_multiplier * self.difficulty_multiplier)
-        self.speed = int((self.base_speed + self.level) * floor_multiplier * self.difficulty_multiplier)  # Speed grows linearly
-        self.intelligence = int((self.base_intelligence + self.level) * floor_multiplier * self.difficulty_multiplier)  # Intelligence grows linearly
+        # Integer-only scaling
+        floor_multiplier = 100 + (floor * 10)  # Represent as percentage
 
-        # Set max HP based on recalculated HP
+        def apply_scaling(base_stat):
+            raw = (base_stat + self.level) * floor_multiplier * self.difficulty_multiplier
+            scaled = raw // 10000  # Since both are percent-based (e.g., 125 * 110)
+            if self.rounding_method == "up":
+                return max(1, int(scaled) + (1 if raw % 10000 != 0 else 0))
+            elif self.rounding_method == "down":
+                return max(1, int(scaled))  # Floor division already rounds down
+            else:
+                return max(1, round(scaled))
+
+        self.hp = apply_scaling(self.base_hp)
+        self.strength = apply_scaling(self.base_strength)
+        self.defense = apply_scaling(self.base_defense)
+        self.speed = apply_scaling(self.base_speed)
+        self.intelligence = apply_scaling(self.base_intelligence)
+
         self.max_hp = self.hp
+
 
     def apply_status(self, effect_name, duration):
         found = False

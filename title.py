@@ -39,64 +39,57 @@ def display_options_menu():
     global text_speed
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "Options")
-    print(center_text(Fore.WHITE + ""))
-    print(center_text("- Text Speed: " + Fore.YELLOW + text_speed.capitalize() + " -"))
-    print(center_text("- Back to Main Menu -"))
-    
-    option = input(Fore.YELLOW + "> ").lower()
-    while option not in ['text speed', 'back to main menu']:
-        print(Fore.RED + "Invalid input! Please use a valid command!\n")
-        option = input(Fore.YELLOW + "> ").lower()
 
-    if option == "text speed":
-        return change_text_speed()  
-    elif option == "back to main menu":
+    print(center_text(Fore.WHITE + "╔════════════════════════════════╗"))
+    print(center_text("║ " + Fore.CYAN + "1. Text Speed" + Fore.WHITE + f" [{text_speed.capitalize()}]     ║"))
+    print(center_text("║ " + Fore.CYAN + "2. Back to Main Menu" + Fore.WHITE + "           ║"))
+    print(center_text("╚════════════════════════════════╝"))
+
+    choice = input(Fore.YELLOW + "\nEnter choice (1-2): ").strip()
+
+    while choice not in ['1', '2']:
+        print(Fore.RED + "Invalid input! Please enter 1 or 2.")
+        choice = input(Fore.YELLOW + "\nEnter choice (1-2): ").strip()
+
+    if choice == '1':
+        return change_text_speed()
+    elif choice == '2':
         print(Fore.CYAN + "Returning to main menu...")
         time.sleep(1)
-        return "back_to_main_menu" 
+        return "back_to_main_menu"
+
 
 def change_text_speed():
     update_presence("In Options", "Adjusting text speed")
     global text_speed
     os.system('cls' if os.name == 'nt' else 'clear')
-    animate_title(Fore.MAGENTA + "Select Text Speed")
-    print(center_text(Fore.WHITE + ""))
-    print(center_text("- Slow -"))
-    print(center_text("- Normal (Current) -"))
-    print(center_text("- Fast -"))
-    print(center_text("- Very Fast -"))
-    print(center_text("- Fastest -"))
-    print(center_text("- Back to Options -"))
+    animate_title(Fore.MAGENTA + "Text Speed Settings")
 
-    choice = input(Fore.YELLOW + "> ").lower()
-    while choice not in ['slow', 'normal', 'fast', 'very fast', 'fastest', 'back to options']:
-        print(Fore.RED + "Invalid input! Please use a valid command!\n")
-        choice = input(Fore.YELLOW + "> ").lower()
+    options = ['Slow', 'Normal', 'Fast', 'Very Fast', 'Fastest']
+    current = text_speed.capitalize()
 
-    if choice == "slow":
-        text_speed = "slow"
-        print(Fore.GREEN + "Text speed set to Slow.")
-        time.sleep(1)
-    elif choice == "normal":
-        text_speed = "normal"
-        print(Fore.GREEN + "Text speed set to Normal.")
-        time.sleep(1)
-    elif choice == "fast":
-        text_speed = "fast"
-        print(Fore.GREEN + "Text speed set to Fast.")
-        time.sleep(1)
-    elif choice == "very fast":
-        text_speed = "very fast"
-        print(Fore.GREEN + "Text speed set to Very Fast.")
-        time.sleep(1)
-    elif choice == "fastest":
-        text_speed = "fastest"
-        print(Fore.GREEN + "Text speed set to Fastest.")
-        time.sleep(2)
-    elif choice == "back to options":
-        return "back_to_options" 
+    print(center_text(Fore.WHITE + "╔════════════════════════════════╗"))
+    for i, option in enumerate(options, 1):
+        selected = " (Current)" if option.lower() == text_speed else ""
+        print(center_text("║ " + Fore.CYAN + f"{i}. {option}" + Fore.WHITE + f"{selected:<22}║"))
+    print(center_text("║ " + Fore.CYAN + "6. Back to Options" + Fore.WHITE + "             ║"))
+    print(center_text("╚════════════════════════════════╝"))
 
-    return "text_speed_changed"  
+    choice = input(Fore.YELLOW + "\nSelect a number (1-6): ").strip()
+
+    while choice not in [str(i) for i in range(1, 7)]:
+        print(Fore.RED + "Invalid input! Please enter a number between 1 and 6.")
+        choice = input(Fore.YELLOW + "\nSelect a number (1-6): ").strip()
+
+    if choice == '6':
+        return "back_to_options"
+
+    new_speed = options[int(choice) - 1].lower()
+    text_speed = new_speed
+    print(Fore.GREEN + f"Text speed set to {new_speed.capitalize()}.")
+    time.sleep(1.5)
+    return "text_speed_changed"
+
 
 def title_screen():
     global tower
@@ -121,17 +114,17 @@ def title_screen():
         print(Fore.RED + "Invalid input! Please use a valid command!\n")
         option = input(Fore.YELLOW + "> ").lower().strip()
 
-    if option == "play":
+    if option == "play" or option == "1":
         return character_creation()
-    elif option == "tower":
+    elif option == "tower" or option == "2":
         return create_tower_run()
-    elif option == "credits":
+    elif option == "credits" or option == "3":
         credits_screen()
         return title_screen()
-    elif option == "options":
+    elif option == "options" or option == "4":
         result = display_options_menu()
         return title_screen()  # Always return after options
-    elif option == "quit":
+    elif option == "quit" or option == "5":
         confirm = input(Fore.RED + "Are you sure you want to quit? (yes/no) > ").lower().strip()
         if confirm == "yes":
             disconnect_from_discord()

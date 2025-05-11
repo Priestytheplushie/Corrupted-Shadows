@@ -88,7 +88,11 @@ def create_tower_run():
 
     # Final Message
     typewriter(Fore.YELLOW + "You are now ready to face the Tower!\n", delay=0.03)
-    print("\n")
+    update_presence(
+        state="Ascending the Tower",
+        details="Preparing for the Challenge",
+        large_image="corrupted_shadows",
+    )
     time.sleep(3)
 
     return player, True
