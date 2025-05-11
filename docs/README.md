@@ -7,6 +7,9 @@ description: >-
 
 # Home
 
+## NOTE:
+This documentation is currently outdated. Please check again soon for the updated documentation!
+
 ## Welcome to the Corrupted Codex
 
 This is your guide to **Corrupted Shadows**, where you explore and fight to save a world plagued by corruption. As you journey through the land, you will uncover long-lost secrets and face the growing darkness spreading across the world.
