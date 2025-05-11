@@ -205,31 +205,26 @@ def player_turn(player, enemies, mode, bonus_ap=0):
         ap = math.ceil(len(enemies) / 2)
         ap += calculate_ap_bonus(player.speed, [e.speed for e in enemies])
     else:
-        ap = 1 + bonus_ap 
+        ap = 1 + bonus_ap
 
     while True:
         if mode == "multi":
             print(Fore.YELLOW + "You have " + str(ap) + " Action Points (AP).")
-            
+
         if mode == "single" and ap <= 0:
-            break  # Exit the loop if no AP in single mode
-            
+            break  # Exit if no AP left in single mode
+
         print(Fore.CYAN + "-" * 40)
         typewriter(Fore.MAGENTA + "Your Turn - Turn " + str(turn))
 
         if mode == "multi":
             print(Fore.WHITE + "HP: " + str(player.hp) + " | Action Points: " + str(ap))
-            alive_enemies = [e for e in enemies if e.hp > 0]  # Recalculate alive enemies
-            
+            alive_enemies = [e for e in enemies if e.hp > 0]
             for i, enemy in enumerate(alive_enemies):
                 print(Fore.GREEN + str(i + 1) + ". " + enemy.name + " (" + str(enemy.hp) + "/" + str(enemy.max_hp) + " HP)")
-
         else:
-            if bonus_ap > 0:
-                print(Fore.WHITE + "HP: " + str(player.hp) + " | Action Points: " + str(ap)) 
-            else:
-                print(Fore.WHITE + "HP: " + str(player.hp) + " | Enemy HP: " + str(enemies[0].hp))
-        
+            print(Fore.WHITE + "HP: " + str(player.hp) + " | Enemy HP: " + str(enemies[0].hp) + " | Action Points: " + str(ap))
+
         print(Fore.CYAN + "-" * 40)
         print("")
 
@@ -244,13 +239,9 @@ def player_turn(player, enemies, mode, bonus_ap=0):
             break
 
         typewriter(Fore.YELLOW + "What will you do?")
-        
+
         if ap <= 0 and mode == "multi":
             print(Fore.BLACK + "1. Attack  [Not enough AP]")
-            if isinstance(player.weapon, Weapon):
-                print(Fore.BLACK + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
-            else:
-                print(Fore.BLACK + "You have no weapon equipped.")
             print(Fore.BLACK + "2. Defensive Stance  [Not enough AP]")
             if len(player.inventory.items) > 0:
                 print(Fore.BLACK + "3. Use Item  [Not enough AP]")
@@ -259,10 +250,6 @@ def player_turn(player, enemies, mode, bonus_ap=0):
             print(Fore.BLACK + "6. Identify  [Not enough AP]")
         else:
             print(Fore.GREEN + "1. Attack")
-            if isinstance(player.weapon, Weapon):
-                print(Fore.YELLOW + "Your weapon: " + player.weapon.name + " (equipped) | Durability: " + str(player.weapon.durability) + "/" + str(player.weapon.max_durability))
-            else:
-                print(Fore.RED + "You have no weapon equipped.")
             print(Fore.GREEN + "2. Defensive Stance")
             if len(player.inventory.items) > 0:
                 print(Fore.GREEN + "3. Use Item")
@@ -279,45 +266,29 @@ def player_turn(player, enemies, mode, bonus_ap=0):
             if ap > 0:
                 if mode == "multi":
                     print(Fore.YELLOW + "Choose a target to attack:")
-                    
-                    # Create a list of alive enemies
                     alive_enemies = [e for e in enemies if e.hp > 0]
-                    
-                    # Display all alive enemies
                     for i, enemy in enumerate(alive_enemies):
                         print(Fore.GREEN + str(i + 1) + ". " + enemy.name + " (" + str(enemy.hp) + "/" + str(enemy.max_hp) + " HP)")
-
                     try:
-                        # Prompt the player to select an enemy
                         index = int(input(Fore.YELLOW + "> ")) - 1
-                        
-                        # Ensure the index is within bounds of the alive_enemies list
                         if 0 <= index < len(alive_enemies):
-                            target = alive_enemies[index]  # Get the actual target based on selection
-
-                            # If player has no weapon, use a punch attack
+                            target = alive_enemies[index]
                             if player.weapon is None:
                                 player.punch(target)
                             else:
-                                # AOE Weapon: Attack all enemies
                                 if hasattr(player.weapon, 'aoe') and player.weapon.aoe:
                                     print(Fore.YELLOW + "You unleash a powerful area-of-effect attack!")
                                     for enemy in alive_enemies:
-                                        if enemy.hp > 0:  # Only attack alive enemies
+                                        if enemy.hp > 0:
                                             player.weapon.attack(player, enemy)
                                 else:
-                                    # Single-target weapon attack
                                     player.weapon.attack(player, target)
-                            
-                            ap -= 1  # Deduct AP after the attack
+                            ap -= 1
                         else:
-                            print(Fore.RED + "Invalid selection. Please choose a valid target.")
-
-                        print("")  # Space after the action
-
+                            print(Fore.RED + "Invalid selection.")
                     except ValueError:
-                        print(Fore.RED + "Invalid input. Please enter a number.")
-
+                        print(Fore.RED + "Invalid input.")
+                    print("")
                 else:
                     target = enemies[0]
                     if target.hp > 0:
@@ -325,56 +296,52 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                             player.punch(target)
                         else:
                             if hasattr(player.weapon, 'aoe') and player.weapon.aoe:
-                                # AOE Weapon: Attack all enemies
                                 print(Fore.YELLOW + "You unleash a powerful area-of-effect attack!")
                                 print("")
                                 time.sleep(2)
                                 for enemy in enemies:
-                                    if enemy.hp > 0:  # Only attack alive enemies
+                                    if enemy.hp > 0:
                                         player.weapon.attack(player, enemy)
                                         time.sleep(2)
                             else:
-                                # Single-target weapon
                                 player.weapon.attack(player, target)
                         ap -= 1
                         print("")
-                        break
+                        if ap <= 0:
+                            break
             else:
                 if mode == "multi":
                     print(Fore.RED + "Not enough Action Points to attack.")
-                    print("")
+
         elif choice == "2":
             if ap > 0:
                 player.defend()
                 ap -= 1
+                if mode == "single" and ap <= 0:
+                    break
             else:
                 if mode == "multi":
-                    print(Fore.RED + "Not enough Action Points to take a defensive stance.")
-                    print("")
+                    print(Fore.RED + "Not enough Action Points to defend.")
+
         elif choice == "3":
             if len(player.inventory.items) > 0:
                 while True:
-
-                    if ap <= 0 and mode == "multi":
-                        print(Fore.RED + "You don't have enough AP to use an item!")
-                        print("")
-                        break
-                    elif ap <= 0:
+                    if ap <= 0:
+                        print(Fore.RED + "Not enough AP to use an item.")
                         break
 
                     print(Fore.CYAN + "-" * 40)
                     print(Fore.YELLOW + "Choose an item by number (or 'Enter' to go back):")
                     for i, item in enumerate(player.inventory.items):
-                        print(Fore.GREEN + "%s. %s" % (str(i + 1), item.name))
+                        print(Fore.GREEN + f"{i + 1}. {item.name}")
                         for line in item.description.split("\n"):
                             print(Fore.LIGHTBLACK_EX + "   " + line)
                         if hasattr(item, "durability") and hasattr(item, "max_durability"):
-                            print(Fore.LIGHTBLACK_EX + "   Durability: %s/%s" % (str(item.durability), str(item.max_durability)))
+                            print(Fore.LIGHTBLACK_EX + f"   Durability: {item.durability}/{item.max_durability}")
                         elif hasattr(item, "quantity"):
-                            print(Fore.LIGHTBLACK_EX + "   Quantity: %s" % str(item.quantity))
+                            print(Fore.LIGHTBLACK_EX + f"   Quantity: {item.quantity}")
 
-                    item_choice = input(Fore.YELLOW + "> ").strip().lower()
-
+                    item_choice = input(Fore.YELLOW + "> ").strip()
                     if item_choice == "":
                         break
 
@@ -383,77 +350,70 @@ def player_turn(player, enemies, mode, bonus_ap=0):
                         if 0 <= index < len(player.inventory.items):
                             item = player.inventory.items[index]
                             if isinstance(item, UseableItem):
-                                if enemies:
-                                    print("Choose an enemy to target for cleansing:")
-                                    for i, enemy in enumerate(enemies):
-                                        if enemy.corrupted:
-                                            print(Fore.GREEN + str(i + 1) + ". " + enemy.name + Style.RESET_ALL)
-
-                                    target_choice = input(Fore.YELLOW + "> ")
-                                    target_choice = int(target_choice) - 1
-                                    target = enemies[target_choice]
-
-                                    item.use(player, target)
-                                else:
-                                    print(Fore.RED + "No enemies available to target." + Style.RESET_ALL)
+                                print("Choose an enemy to target for cleansing:")
+                                for i, enemy in enumerate(enemies):
+                                    if enemy.corrupted:
+                                        print(Fore.GREEN + f"{i + 1}. {enemy.name}")
+                                target_choice = input(Fore.YELLOW + "> ")
+                                target = enemies[int(target_choice) - 1]
+                                item.use(player, target)
                             elif isinstance(item, Weapon):
                                 item.equip(player)
-                                print(Fore.GREEN + item.name + " equipped!")
+                                print(Fore.GREEN + f"{item.name} equipped!")
                             elif isinstance(item, Potion):
                                 item.use(player)
-                                print(Fore.GREEN + item.name + " used successfully!")
-                                player.inventory.items.remove(item)  # Remove the potion from inventory after use
+                                print(Fore.GREEN + f"{item.name} used!")
+                                player.inventory.items.remove(item)
                             else:
-                                print(Fore.RED + "This item cannot be used here.")
-                            ap -= 1 
-                            if mode == "multi":
-                                print("")
-                                print(Fore.GREEN + item.name + " used! Remaining AP: " + str(ap))
-                                print("")
-                                time.sleep(1)
+                                print(Fore.RED + "This item cannot be used.")
+                            ap -= 1
+                            if mode == "single" and ap <= 0:
+                                break
                         else:
                             print(Fore.RED + "Invalid item selection.")
                     except ValueError:
                         print(Fore.RED + "Invalid input.")
             else:
                 print(Fore.RED + "Your inventory is empty.")
+
         elif choice == "4":
             for i, item in enumerate(player.inventory.items):
-                print(Fore.GREEN + "%s. %s" % (str(i + 1), item.name))
+                print(Fore.GREEN + f"{i + 1}. {item.name}")
                 for line in item.description.split("\n"):
                     print(Fore.LIGHTBLACK_EX + "   " + line)
                 if hasattr(item, "durability") and hasattr(item, "max_durability"):
-                    print(Fore.LIGHTBLACK_EX + "   Durability: %s/%s" % (str(item.durability), str(item.max_durability)))
+                    print(Fore.LIGHTBLACK_EX + f"   Durability: {item.durability}/{item.max_durability}")
                 elif hasattr(item, "quantity"):
-                    print(Fore.LIGHTBLACK_EX + "   Quantity: %s" % str(item.quantity))
-                time.sleep(3)
+                    print(Fore.LIGHTBLACK_EX + f"   Quantity: {item.quantity}")
+            time.sleep(3)
 
         elif choice == "5":
             show_character_sheet(player, False)
+
         elif choice == "6":
             if mode == "multi":
                 for enemy in enemies:
-                    if enemy.hp <= 0:
-                        continue
-                    print(Fore.CYAN + "--- Enemy: " + enemy.name)
-                    print(Fore.YELLOW + "Health: " + str(enemy.hp) + "/" + str(enemy.max_hp))
-                    print(Fore.YELLOW + "Level: " + str(enemy.level))
-                    if enemy.corrupted:
-                        enemy.reveal_identity() 
-
-                    time.sleep(1) 
+                    if enemy.hp > 0:
+                        print(Fore.CYAN + f"--- Enemy: {enemy.name}")
+                        print(Fore.YELLOW + f"Health: {enemy.hp}/{enemy.max_hp}")
+                        print(Fore.YELLOW + f"Level: {enemy.level}")
+                        if enemy.corrupted:
+                            enemy.reveal_identity()
+                        time.sleep(1)
             else:
-                print(Fore.CYAN + "--- Enemy: " + enemies[0].name)
-                print(Fore.YELLOW + "Health: " + str(enemies[0].hp) + "/" + str(enemies[0].max_hp))
-                print(Fore.YELLOW + "Level: " + str(enemies[0].level))
-                if enemies[0].corrupted:
-                    enemies[0].reveal_identity()
+                enemy = enemies[0]
+                print(Fore.CYAN + f"--- Enemy: {enemy.name}")
+                print(Fore.YELLOW + f"Health: {enemy.hp}/{enemy.max_hp}")
+                print(Fore.YELLOW + f"Level: {enemy.level}")
+                if enemy.corrupted:
+                    enemy.reveal_identity()
 
         elif choice == "7" and mode == "multi":
             break
+
         else:
             print(Fore.RED + "Invalid input.")
-            print("")
+
 
 def battle(player, enemies, battle_mode="single", bonus_ap=0):
     from discord import update_presence  # Import the update_presence function
