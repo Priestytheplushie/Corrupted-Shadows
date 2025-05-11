@@ -6,8 +6,14 @@ from new_game import character_creation
 from tower.tower_creation import create_tower_run
 from text_utils import animate_title, center_text, clear_screen
 from game_data import * 
+from discord import connect_to_discord, update_presence, disconnect_from_discord
 
 def credits_screen():
+    try:
+        update_presence(state="In the Credits", details="Game by Priesty")
+    except Exception as e:
+        print(Fore.RED + f"Failed to update Discord Rich Presence: {e}")
+
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "=== CREDITS ===")
     print("")
@@ -19,6 +25,7 @@ def credits_screen():
     return
 
 def display_options_menu():
+    update_presence("In Options", "Adjusting Game Settings")
     global text_speed
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "Options")
@@ -39,6 +46,7 @@ def display_options_menu():
         return "back_to_main_menu" 
 
 def change_text_speed():
+    update_presence("In Options", "Adjusting text speed")
     global text_speed
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "Select Text Speed")
@@ -83,33 +91,35 @@ def change_text_speed():
 
 
 def title_screen():
+    update_presence("In the Title Screen", "Browsing Menus")
     global tower
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "Corrupted Shadows")
-    print(center_text(Fore.WHITE+"v0.3.1-towerMVB"))
+    print(center_text(Fore.WHITE + "v0.3.1-towerMVB"))
     print(center_text(Fore.WHITE + ""))
     print(center_text("- Play -"))
     print(center_text("- Tower -"))
     print(center_text("- Credits -"))
     print(center_text("- Options -"))
     print(center_text("- Quit -"))
-    
+
     option = input(Fore.YELLOW + "> ").lower()
     while option not in ['play', 'tower', 'credits', 'options', 'quit']:
         print(Fore.RED + "Invalid input! Please use a valid command!\n")
         option = input(Fore.YELLOW + "> ").lower()
 
     if option == "play":
-        return character_creation()  
+        return character_creation()  # Returns (player, False)
     elif option == "tower":
-        return create_tower_run()
+        return create_tower_run()  # Returns (player, True)
     elif option == "credits":
         credits_screen()
+        return title_screen()  # Return to the title screen after credits
     elif option == "options":
         result = display_options_menu()
         if result == "back_to_main_menu":
-            return None  
+            return title_screen()  # Return to the title screen after options
         elif result == "text_speed_changed":
-            return title_screen() 
+            return title_screen()  # Return to the title screen after changing text speed
     elif option == "quit":
         sys.exit()

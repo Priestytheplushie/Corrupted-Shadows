@@ -5,8 +5,11 @@ import os
 from screens import show_character_sheet
 from text_utils import clear_screen, typewriter, animate_title, dice_roll_animation
 from game_data import difficulty
+from discord import update_presence
 
 def character_creation():
+    # Update the presence to show character creation
+    update_presence("Playing Campagin", "Creating a character")
     global difficulty
     clear_screen()
     animate_title(Fore.MAGENTA + "Character Creation", delay=0.07)
@@ -75,4 +78,4 @@ def character_creation():
     player = Player(name, hp, strength, speed, intelligence, defense, money,None)
     show_character_sheet(player)
 
-    return player
+    return player, False

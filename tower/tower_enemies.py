@@ -4,13 +4,19 @@ import time
 from game_data import *
 from attack import calculate_attack
 
+from colorama import Fore, Style
+import random
+import time
+from game_data import *
+from attack import calculate_attack
+
 class Enemy:
     def __init__(self, name, level, hp=None, strength=None, defense=None, speed=None, intelligence=None, weapon=None, loot_table_key="none"):
         self.name = name
         self.real_name = name
         self.weapon = weapon
         self.loot_table_key = loot_table_key
-        self.level = level
+        self.level = max(1, level)  # Ensure a minimum level of 1
         self.status_effects = []
         self.hp = hp
         self.strength = strength
@@ -55,20 +61,23 @@ class Enemy:
         # Get the difficulty multiplier
         multiplier = difficulty_multipliers.get(difficulty, 1.0)
 
-        # Scale base stats by the difficulty multiplier
-        self.base_hp = int(self.base_hp * multiplier)
-        self.base_strength = int(self.base_strength * multiplier)
-        self.base_defense = int(self.base_defense * multiplier)
-        self.base_speed = int(self.base_speed * multiplier)
-        self.base_intelligence = int(self.base_intelligence * multiplier)
-        
+        # Scale base stats by the difficulty multiplier, but ensure a minimum threshold
+        self.base_hp = max(10, int(self.base_hp * multiplier))
+        self.base_strength = max(2, int(self.base_strength * multiplier))
+        self.base_defense = max(1, int(self.base_defense * multiplier))
+        self.base_speed = max(3, int(self.base_speed * multiplier))
+        self.base_intelligence = max(2, int(self.base_intelligence * multiplier))
+
     def calculate_stats(self):
-        # Scale stats based on level
-        self.hp = self.base_hp * self.level
-        self.strength = self.base_strength * self.level
-        self.defense = self.base_defense * self.level
-        self.speed = self.base_speed + self.level  # Speed grows linearly
-        self.intelligence = self.base_intelligence + self.level  # Intelligence grows linearly
+        global floor
+
+        # Scale stats based on level and floor
+        floor_multiplier = 1 + (floor * 0.1)  # Increase stats by 10% per floor
+        self.hp = max(1, int(self.base_hp * self.level * floor_multiplier))  # Ensure HP is at least 1
+        self.strength = int(self.base_strength * self.level * floor_multiplier)
+        self.defense = int(self.base_defense * self.level * floor_multiplier)
+        self.speed = int(self.base_speed + self.level * floor_multiplier)  # Speed grows linearly
+        self.intelligence = int(self.base_intelligence + self.level * floor_multiplier)  # Intelligence grows linearly
 
         # Set max HP based on recalculated HP
         self.max_hp = self.hp
@@ -268,7 +277,7 @@ class CorruptedMage(Enemy):
         if random.random() < 0.30:
             burned_item = random.choice(target.inventory.items)
             print(Fore.RED + burned_item.name + " was burned and is now unusable!" + Fore.WHITE)
-            target.inventory.remove_item(burned_item)
+            target.inventory.items.remove(burned_item)
 
     def energy_ball(self, target):
         damage = random.randint(5, 15)  # Energy Ball damage

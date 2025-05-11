@@ -11,6 +11,7 @@ from tower.tower_item_data import tower_library
 from item_factory import create_item
 from tower.tower_screens import *
 from screens import show_character_sheet
+from discord import update_presence
 
 enemies = []
 
@@ -56,7 +57,10 @@ def setup_next_battle(player):
 
 def present_battle_info(player):
     global enemies, bonus_ap
-
+    update_presence(
+        state=f"Tower - Pre Battle ({floor})",
+        details=f"Next Battle: {next_battle.capitalize()} | Score: {tower_score}",
+    )
     while True:
         clear_screen()
 
@@ -78,7 +82,7 @@ def present_battle_info(player):
 
         # Menu Options
         print(Fore.CYAN + "What would you like to do?")
-        print("[1] Ready Up for Battle")
+        print("[1] Ready Up")
         print("[2] Check Inventory")
         print("[3] View Character Sheet")
         if player.battle_shifter:
@@ -109,6 +113,11 @@ def present_battle_info(player):
 def calculate_reward(player):
     global floor, tower_difficulty, tower_score, next_battle, enemies, bonus_ap
 
+    # Update the presence to show reward calculation
+    update_presence(
+        state="Ascending the Tower",
+        details="Choosing a Reward"
+    )
     if not hasattr(player, 'reroll_used'):
         player.reroll_used = 0
     if not hasattr(player, 'battle_shifter'):
@@ -274,6 +283,10 @@ def main(player):
     while True:
         clear_screen()
         floor_screen(player, False,True)
+        update_presence(
+        state=f"Tower - Floor {floor}",
+        details=f"Next Battle: {next_battle.capitalize()} | Score: {tower_score}",
+        )
 
         choice = input(Fore.CYAN + Style.BRIGHT + "Choose an option > ").strip()
         while choice not in ["1", "2", "3", "4"]:
@@ -319,6 +332,11 @@ def main(player):
             print("Tower Score:".ljust(20) + str(tower_score))
             print("Current HP:".ljust(20) + f"{player.hp}/{player.max_hp} (Recovered 10%)")
 
+            # Update Discord Rich Presence for Floor Cleared Summary
+            update_presence(
+                state="Ascending the Tower",
+                details=f"Floor {floor} | Score {tower_score} | HP {player.hp}/{player.max_hp}"
+            )
 
             if tower_difficulty != "hardcore":
                 print("Corruption:".ljust(20) + f"{player.corruption}%")

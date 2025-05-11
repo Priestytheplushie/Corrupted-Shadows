@@ -6,8 +6,11 @@ import time
 from screens import show_character_sheet
 from text_utils import clear_screen, typewriter, animate_title, dice_roll_animation
 from tower.tower_data import tower_difficulty
+from discord import update_presence
 
 def create_tower_run():
+    # Update the presence to show tower creation
+    update_presence("Ascending the Tower", "Creating a Tower Avatar")
     clear_screen()
     animate_title(Fore.MAGENTA + "Tower Creation", delay=0.07)
     print("\n")

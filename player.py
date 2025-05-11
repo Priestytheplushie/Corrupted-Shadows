@@ -83,6 +83,8 @@ class Player:
         print("Weapon unequipped.")
 
     def level_up(self):
+        from discord import update_presence  # Import the update_presence function
+
         level_thresholds = {
             2: 100,
             3: 300,
@@ -185,8 +187,8 @@ class Player:
             100: 44810000
         }
 
-
         while self.level + 1 in level_thresholds and self.xp >= level_thresholds[self.level + 1]:
+            old_level = self.level
             self.level += 1
             self.max_hp += 10
             self.hp = self.max_hp
@@ -194,16 +196,21 @@ class Player:
             self.defense += 1
             self.intelligence += 1
 
+            # Update Discord Rich Presence for level up
+            update_presence(
+                state="Level Up!",
+                details=f"{self.name} Leveled Up! {old_level} ---> {self.level}"
+            )
+
+            # Display level-up messages
             print("")
             animate_title(Fore.MAGENTA + "LEVEL UP!" + Style.RESET_ALL)
-            animate_title("You are now level " + str(self.level) + "!")
+            animate_title(f"{self.name} Leveled Up! {old_level} ---> {self.level}")
             animate_title("HP: " + str(self.max_hp))
             animate_title("Strength: " + str(self.strength))
             animate_title("Defense: " + str(self.defense))
             animate_title("Intelligence: " + str(self.intelligence))
             print("")
-
-            input(center_text("Press Enter to continue..."))
 
     def apply_status(self, effect, duration):
         self.status_effects.append({'effect': effect, 'duration': duration})
