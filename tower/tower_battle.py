@@ -22,11 +22,12 @@ from strings import (
     multi_battle_player_goes_first,
     multi_battle_random_initiative
 )
+from discord import update_presence
 
 turn = 1
 
 def check_level_up(player):
-    player.level_up()
+    player.check_level_up()
 
 def calculate_xp(enemy, player):
     global tower_difficulty, floor, tower_score
@@ -81,6 +82,10 @@ def battle_conclusion(player, enemies, mode):
 
         typewriter(Fore.YELLOW + player.name + " has defeated " + enemy.name + "!", delay=0.1)
 
+    update_presence(
+        state="In Battle - Victory",
+        details=f"XP {total_xp} | Enemies Defeated {len(killed_enemies)}"
+    )
     time.sleep(1)
     clear_screen()
     animate_title(Fore.CYAN + "BATTLE OVER!", delay=0.05)
@@ -92,13 +97,13 @@ def battle_conclusion(player, enemies, mode):
     print("")
     print(center_text(Fore.WHITE + "Enemies Defeated: " + ", ".join(killed_enemies)))
 
-
     print(center_text(Fore.YELLOW + "Press Enter to continue..." + Fore.RESET))
 
+    # Award XP and check for level-up
     player.xp += total_xp
     check_level_up(player)
 
-    input()
+    input((center_text(Fore.YELLOW + "Press Enter to return to the Tower..." + Fore.RESET)))
     clear_screen()
 
 def calculate_ap_bonus(player_speed, enemy_speeds):
@@ -159,11 +164,6 @@ def player_turn(player, enemies, mode, bonus_ap=0):
         if mode == "multi":
             print(Fore.WHITE + "HP: " + str(player.hp) + " | Action Points: " + str(ap))
             alive_enemies = [e for e in enemies if e.hp > 0]  # Recalculate alive enemies
-            
-            if not alive_enemies:
-                print(Fore.GREEN + "All enemies have been defeated!")
-                battle_conclusion(player, enemies, mode="multi")
-                break  # End loop after conclusion (optional if battle_conclusion exits the loop)
             
             for i, enemy in enumerate(alive_enemies):
                 print(Fore.GREEN + str(i + 1) + ". " + enemy.name + " (" + str(enemy.hp) + "/" + str(enemy.max_hp) + " HP)")
@@ -404,6 +404,7 @@ def player_turn(player, enemies, mode, bonus_ap=0):
             print("")
 
 def battle(player, enemies, battle_mode="single", bonus_ap=0):
+    from discord import update_presence  # Import the update_presence function
     global turn
     turn = 1
     clear_screen()
@@ -412,6 +413,15 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
     if not isinstance(enemies, list):
         enemies = [enemies]
 
+    # Update Discord Presence for the start of the battle
+    update_presence(
+        state="In a Battle",
+        details="Preparing for Battle",
+        small_image="battle",
+        small_text=f"Turn {turn} | Preparing"
+    )
+
+    # Battle logic
     if battle_mode == "multi":
         typewriter(random.choice(multi_battle_intro(player, enemies)))
         print("")
@@ -420,41 +430,83 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
             typewriter(multi_battle_player_goes_first(player, enemies))
             print("")
             time.sleep(2)
+            # Update Discord Presence for player's turn
+            update_presence(
+                state="In a Battle",
+                details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}",
+                small_image="battle",
+                small_text=f"Turn {turn} | {player.name}'s Turn"
+            )
             player_turn(player, enemies, battle_mode, bonus_ap)
             player_went_first = True
         elif all(enemy.speed > player.speed for enemy in enemies):
             typewriter(multi_battle_enemies_go_first(player, enemies))
             print("")
             time.sleep(1)
+            # Update Discord Presence for enemy's turn
+            update_presence(
+                state="In a Battle",
+                details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn",
+                small_image="battle",
+                small_text=f"Turn {turn} | Enemies' Turn"
+            )
             enemy_turn(player, enemies, battle_mode)
         else:
             typewriter(multi_battle_random_initiative(player, enemies))
             print("")
             time.sleep(3)
             if random.choice([True, False]):
+                # Update Discord Presence for player's turn
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
+                )
                 player_turn(player, enemies, battle_mode, bonus_ap)
                 player_went_first = True
             else:
+                # Update Discord Presence for enemy's turn
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
+                )
                 enemy_turn(player, enemies, battle_mode)
     else:
         typewriter(randomized_intro_messages(player, enemies[0]))
         print("")
         time.sleep(2)
-        typewriter(Fore.YELLOW + "Battle started!")
+        typewriter("Battle started!")
         print("")
         time.sleep(1)
-        typewriter(Fore.GREEN + player.name + Fore.WHITE + " v.s " + Fore.RED + enemies[0].name)
+        typewriter(f"{player.name} v.s {enemies[0].name}")
         print("")
         time.sleep(2)
         if enemies[0].speed > player.speed:
             typewriter(enemy_attacks_first_message(player, enemies[0]))
             print("")
             time.sleep(2)
+            # Update Discord Presence for enemy's turn
+            update_presence(
+                state="In a Battle",
+                details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn",
+                small_image="battle",
+                small_text=f"Turn {turn} | Enemies' Turn"
+            )
             enemy_turn(player, enemies, battle_mode)
         elif enemies[0].speed < player.speed:
             typewriter(player_attacks_first_message(player, enemies[0]))
             print("")
             time.sleep(1)
+            # Update Discord Presence for player's turn
+            update_presence(
+                state="In a Battle",
+                details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}",
+                small_image="battle",
+                small_text=f"Turn {turn} | {player.name}'s Turn"
+            )
             player_turn(player, enemies, battle_mode, bonus_ap)
             player_went_first = True
         else:
@@ -462,22 +514,67 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
             print("")
             time.sleep(3)
             if random.randint(1, 2) == 1:
+                # Update Discord Presence for player's turn
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
+                )
                 player_turn(player, enemies, battle_mode, bonus_ap)
                 player_went_first = True
             else:
+                # Update Discord Presence for enemy's turn
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
+                )
                 enemy_turn(player, enemies, battle_mode)
 
-    if player_went_first and any(e.hp > 0 for e in enemies):
-        enemy_turn(player, enemies, battle_mode)
+    # Ensure the enemy does not attack twice if they went first
+    if not player_went_first and any(e.hp > 0 for e in enemies):
+        player_turn(player, enemies, battle_mode, bonus_ap)
 
     # Main battle loop
     while player.hp > 0 and any(enemy.hp > 0 for enemy in enemies):
         turn += 1
-        print("\n" + Fore.CYAN + f"--- Turn {turn} ---" + Fore.RESET)
-        player_turn(player, enemies, battle_mode, bonus_ap)
-        if all(enemy.hp <= 0 for enemy in enemies):
-            break
-        enemy_turn(player, enemies, battle_mode)
+        print("\n" + f"--- Turn {turn} ---")
+
+        # Update Discord Presence during the battle
+        if turn % 2 == 1:  # Player's turn
+            if battle_mode == "single":
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
+                )
+            else:
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
+                )
+            player_turn(player, enemies, battle_mode, bonus_ap)
+        else:  # Enemy's turn
+            if battle_mode == "single":
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
+                )
+            else:
+                update_presence(
+                    state="In a Battle",
+                    details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
+                )
+            enemy_turn(player, enemies, battle_mode)
 
     if player.hp <= 0:
         return False

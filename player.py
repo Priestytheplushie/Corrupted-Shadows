@@ -82,7 +82,7 @@ class Player:
         self.weapon = None  
         print("Weapon unequipped.")
 
-    def level_up(self):
+    def check_level_up(player):
         level_thresholds = {
             2: 100,
             3: 300,
@@ -93,117 +93,33 @@ class Player:
             8: 2800,
             9: 3700,
             10: 4800,
-            11: 6200,
-            12: 7900,
-            13: 10000,
-            14: 12400,
-            15: 15500,
-            16: 19400,
-            17: 24200,
-            18: 30000,
-            19: 37000,
-            20: 45500,
-            21: 55600,
-            22: 67600,
-            23: 81800,
-            24: 98400,
-            25: 118500,
-            26: 142500,
-            27: 171000,
-            28: 204000,
-            29: 242000,
-            30: 286000,
-            31: 336000,
-            32: 392000,
-            33: 455000,
-            34: 525000,
-            35: 602000,
-            36: 687000,
-            37: 780000,
-            38: 880000,
-            39: 988000,
-            40: 1100000,
-            41: 1235000,
-            42: 1385000,
-            43: 1550000,
-            44: 1730000,
-            45: 1925000,
-            46: 2135000,
-            47: 2360000,
-            48: 2600000,
-            49: 2855000,
-            50: 3125000,
-            51: 3410000,
-            52: 3710000,
-            53: 4025000,
-            54: 4355000,
-            55: 4700000,
-            56: 5060000,
-            57: 5435000,
-            58: 5825000,
-            59: 6230000,
-            60: 6650000,
-            61: 7085000,
-            62: 7535000,
-            63: 8000000,
-            64: 8480000,
-            65: 8975000,
-            66: 9485000,
-            67: 10000000,
-            68: 10550000,
-            69: 11130000,
-            70: 11750000,
-            71: 12400000,
-            72: 13080000,
-            73: 13790000,
-            74: 14540000,
-            75: 15320000,
-            76: 16130000,
-            77: 16980000,
-            78: 17860000,
-            79: 18770000,
-            80: 19710000,
-            81: 20680000,
-            82: 21680000,
-            83: 22710000,
-            84: 23770000,
-            85: 24860000,
-            86: 25980000,
-            87: 27130000,
-            88: 28310000,
-            89: 29520000,
-            90: 30760000,
-            91: 32030000,
-            92: 33330000,
-            93: 34660000,
-            94: 36020000,
-            95: 37410000,
-            96: 38830000,
-            97: 40280000,
-            98: 41760000,
-            99: 43270000,
-            100: 44810000
+            # Add more thresholds as needed
         }
 
+        while player.level + 1 in level_thresholds and player.xp >= level_thresholds[player.level + 1]:
+            old_level = player.level
+            player.level += 1
+            player.max_hp += 10
+            player.hp = player.max_hp
+            player.strength += 2
+            player.defense += 1
+            player.intelligence += 1
 
-        while self.level + 1 in level_thresholds and self.xp >= level_thresholds[self.level + 1]:
-            self.level += 1
-            self.max_hp += 10
-            self.hp = self.max_hp
-            self.strength += 2
-            self.defense += 1
-            self.intelligence += 1
-
+            # Notify the player of the level-up
             print("")
             animate_title(Fore.MAGENTA + "LEVEL UP!" + Style.RESET_ALL)
-            animate_title("You are now level " + str(self.level) + "!")
-            animate_title("HP: " + str(self.max_hp))
-            animate_title("Strength: " + str(self.strength))
-            animate_title("Defense: " + str(self.defense))
-            animate_title("Intelligence: " + str(self.intelligence))
+            animate_title(f"{player.name} Leveled Up! {old_level} ---> {player.level}")
+            animate_title("HP: " + str(player.max_hp))
+            animate_title("Strength: " + str(player.strength))
+            animate_title("Defense: " + str(player.defense))
+            animate_title("Intelligence: " + str(player.intelligence))
             print("")
 
-            input(center_text("Press Enter to continue..."))
+            # Wait for the player to acknowledge the level-up
+            input((center_text(Fore.YELLOW + "Press Enter to continue..." + Fore.RESET)))
+
+        # Ensure the function exits cleanly
+        return
 
     def apply_status(self, effect, duration):
         self.status_effects.append({'effect': effect, 'duration': duration})
@@ -244,7 +160,8 @@ class Player:
         for effect in self.status_effects:
             if effect['effect'] == 'defending':
                 effect['duration'] = random.randint(3, 5)
-                typewriter(Fore.CYAN + self.name + " refreshes their defensive stance!" + Fore.RESET)
+                typewriter(Fore.CYAN + self.name + " refreshes their defensive stance! It will now last for " +
+                        str(effect['duration']) + " turns." + Fore.RESET)
                 print("")
                 return
 

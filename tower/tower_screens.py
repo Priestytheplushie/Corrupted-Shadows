@@ -56,6 +56,7 @@ def corrupted_death_screen():
 
 
 def death_screen(player):
+    global floor, tower_score
     clear_screen()
     print("")
     typewriter(center_text(Fore.RED + "YOU DIED" + Style.RESET_ALL))
@@ -75,6 +76,33 @@ def death_screen(player):
         option = input(Fore.YELLOW + "> ").lower()
 
     if option == "restart":
+        from title import title_screen
+        title_screen()
+    elif option == "quit":
+        sys.exit()
+
+def give_up_screen(player):
+    global floor, tower_score
+    clear_screen()
+    print("")
+    animate_title(Fore.MAGENTA + "YOU GAVE UP" + Style.RESET_ALL)
+    print("")
+
+    # Display the floor reached and tower score
+    print(Fore.YELLOW + "Floor Reached: " + str(floor) + Style.RESET_ALL)
+    print(Fore.YELLOW + "Tower Score: " + str(tower_score) + Style.RESET_ALL)
+    print("")
+
+    # Present options
+    print(center_text("- Return to Title -"))
+    print(center_text("- Quit -"))
+
+    option = input(Fore.YELLOW + "> ").lower()
+    while option not in ['return', 'quit', 'title']:
+        print(Fore.RED + "Invalid input! Please use a valid command!\n")
+        option = input(Fore.YELLOW + "> ").lower()
+
+    if option in ["return", "title"]:
         from title import title_screen
         title_screen()
     elif option == "quit":
