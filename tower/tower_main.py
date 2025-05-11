@@ -110,9 +110,6 @@ def present_battle_info(player):
 
     return True  # Indicate that the player is ready for the battle
 
-
-import threading
-
 def calculate_reward(player):
     global floor, tower_difficulty, tower_score, next_battle, enemies, bonus_ap
 
@@ -244,7 +241,9 @@ def calculate_reward(player):
             print(Fore.YELLOW + "\nRe-rolling rewards..." + Style.RESET_ALL)
             player.reroll_used += 1
             time.sleep(1)
-            calculate_reward(player)
+            stop_rich_presence.set()  # Stop the current Rich Presence thread
+            rich_presence_thread.join()  # Ensure the thread stops before restarting
+            calculate_reward(player)  # Restart the reward selection process
             return  # Exit the current function after re-rolling
         elif choice == "4" and player.reroll_used > 0:
             print(Fore.RED + "You have already used your re-roll!" + Style.RESET_ALL)
@@ -414,4 +413,4 @@ def main(player):
             typewriter("You won't be able to return to this Tower Run.")
             confirm = input(Fore.CYAN + "Type 'yes' to confirm, or anything else to cancel > ").strip().lower()
             if confirm == "yes":
-                sys.exit()
+                give_up_screen()

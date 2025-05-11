@@ -156,7 +156,7 @@ def battle_conclusion(player, enemies, mode):
             player.inventory.add_item(item)
 
     # Wait for the player to acknowledge the battle conclusion
-    input(Fore.YELLOW + "Press Enter to return to the game..." + Fore.RESET)
+    input((center_text(Fore.YELLOW + "Press Enter to return to the game..." + Fore.RESET)))
     clear_screen()
 
     # Ensure the function exits cleanly

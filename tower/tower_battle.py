@@ -103,7 +103,7 @@ def battle_conclusion(player, enemies, mode):
     player.xp += total_xp
     check_level_up(player)
 
-    input(Fore.YELLOW + "Press Enter to return to the game..." + Fore.RESET)
+    input((center_text(Fore.YELLOW + "Press Enter to return to the Tower..." + Fore.RESET)))
     clear_screen()
 
 def calculate_ap_bonus(player_speed, enemy_speeds):

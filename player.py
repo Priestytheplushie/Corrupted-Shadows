@@ -160,7 +160,8 @@ class Player:
         for effect in self.status_effects:
             if effect['effect'] == 'defending':
                 effect['duration'] = random.randint(3, 5)
-                typewriter(Fore.CYAN + self.name + " refreshes their defensive stance!" + Fore.RESET)
+                typewriter(Fore.CYAN + self.name + " refreshes their defensive stance! It will now last for " +
+                        str(effect['duration']) + " turns." + Fore.RESET)
                 print("")
                 return
 

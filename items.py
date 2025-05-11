@@ -23,31 +23,54 @@ class Weapon(Item):
         self.durability = durability
         self.max_durability = durability
         self.name = name
-    def attack(self,user,target):
-        total_damage = self.damage + user.strength
+class Weapon(Item):
+    def __init__(self, name, description, damage, durability):
+        super().__init__(name, description)
+        self.damage = damage
+        self.durability = durability
+        self.max_durability = durability
+
+    def attack(self, user, target):
         if self.durability <= 0:
             print(self.name + " is broken and can't be used!")
             print("")
             user.weapon = None
             del self
             return
-        else:
-            if random.random() < 0.10:
-                print(Fore.YELLOW + user.name + " swings at " + target.name + " but misses!" + Fore.WHITE)
-                print("")
-                time.sleep(1)
-                return
-            target.hp -= total_damage
-            self.durability -= 1
-            print(user.name + " attacks with " + self.name + ", dealing " + str(total_damage) + " damage to " + target.name + "!")
-            if target.defense < 0:
-                print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(total_damage) + " by defense)" + Fore.WHITE)
-            print("")
-            print(target.name + " remaining HP: " + str(target.hp))
+
+        if random.random() < 0.10:  # 10% chance to miss
+            print(Fore.YELLOW + user.name + " swings at " + target.name + " but misses!" + Fore.WHITE)
             print("")
             time.sleep(1)
-            print(self.name + " durability: " + str(self.durability))
-            print("")
+            return
+
+        # Use the global calculate_attack method
+        total_damage = calculate_attack(
+            base_strength=user.strength,
+            weapon_damage=self.damage,
+            crit_chance=0.1,  # 10% crit chance
+            crit_multiplier=2.0,  # Critical hits deal double damage
+            attack_buff=1.0,  # No additional buffs
+            weapon_scaling=0.2,  # Weapon scaling factor
+            element_damage=0,  # No elemental damage
+            min_damage=5,  # Minimum damage
+            max_damage=50  # Maximum damage
+        )
+
+        # Apply damage to the target
+        target.hp -= total_damage
+        self.durability -= 1
+
+        # Display attack details
+        print(user.name + " attacks with " + self.name + ", dealing " + str(total_damage) + " damage to " + target.name + "!")
+        if target.defense > 0:
+            print(Fore.LIGHTBLACK_EX + "(Reduced by defense)" + Fore.WHITE)
+        print("")
+        print(target.name + " remaining HP: " + str(target.hp))
+        print("")
+        time.sleep(1)
+        print(self.name + " durability: " + str(self.durability))
+        print("")
     
     def equip(self, player):
         player.weapon = self
@@ -64,31 +87,49 @@ class OrcsMace(Weapon):
         self.name = name
         self.aoe = True
 
-    def attack(self,user,target):
-        total_damage = self.damage + user.strength
-        if self.durability <= 0:
-            print(self.name + " is broken and can't be used!")
-            print("")
-            user.weapon = None
-            del self
-            return
-        else:
-            if random.random() < 0.10:
+    def attack(self, user, target):
+            if self.durability <= 0:
+                print(self.name + " is broken and can't be used!")
+                print("")
+                user.weapon = None
+                del self
+                return
+
+            if random.random() < 0.10:  # 10% chance to miss
                 print(Fore.YELLOW + user.name + " swings at " + target.name + " but misses!" + Fore.WHITE)
                 print("")
                 time.sleep(1)
                 return
+
+            # Use the global calculate_attack method
+            total_damage = calculate_attack(
+                base_strength=user.strength,
+                weapon_damage=self.damage,
+                crit_chance=0.1,  # 10% crit chance
+                crit_multiplier=2.0,  # Critical hits deal double damage
+                attack_buff=1.0,  # No additional buffs
+                weapon_scaling=0.2,  # Weapon scaling factor
+                element_damage=0,  # No elemental damage
+                min_damage=5,  # Minimum damage
+                max_damage=100  # Maximum damage
+            )
+
+            # Apply damage to the target
             target.hp -= total_damage
             self.durability -= 1
-            print(user.name + " smashes " + target.name + " with " + target.name + ", dealing " + str(total_damage) + " damage!")
+
+            # Display attack details
+            print(user.name + " smashes " + target.name + " with " + self.name + ", dealing " + str(total_damage) + " damage!")
             if target.defense > 0:
-                print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(total_damage) + " by defense)" + Fore.WHITE)
+                print(Fore.LIGHTBLACK_EX + "(Reduced by defense)" + Fore.WHITE)
             print("")
             print(target.name + " remaining HP: " + str(target.hp))
             print("")
             time.sleep(1)
             print(self.name + " durability: " + str(self.durability))
             print("")
+
+            # 30% chance to apply stagger
             if random.random() < 0.3:
                 target.apply_status('stagger', 2)
     

@@ -107,20 +107,19 @@ def title_screen():
     splash, discord_splash = get_random_splash()
     update_presence("In the Title Screen", discord_splash)
 
-    print(center_text(Fore.YELLOW + splash))  # <-- Display splash message
-
+    print(center_text(Fore.YELLOW + splash))
     print(center_text(Fore.WHITE + "v0.4.0"))
-    print(center_text(Fore.WHITE + ""))
+    print(center_text(""))
     print(center_text("- Play -"))
     print(center_text("- Tower -"))
     print(center_text("- Credits -"))
     print(center_text("- Options -"))
     print(center_text("- Quit -"))
 
-    option = input(Fore.YELLOW + "> ").lower()
+    option = input(Fore.YELLOW + "> ").lower().strip()
     while option not in ['play', 'tower', 'credits', 'options', 'quit']:
         print(Fore.RED + "Invalid input! Please use a valid command!\n")
-        option = input(Fore.YELLOW + "> ").lower()
+        option = input(Fore.YELLOW + "> ").lower().strip()
 
     if option == "play":
         return character_creation()
@@ -131,7 +130,11 @@ def title_screen():
         return title_screen()
     elif option == "options":
         result = display_options_menu()
-        if result in ["back_to_main_menu", "text_speed_changed"]:
-            return title_screen()
+        return title_screen()  # Always return after options
     elif option == "quit":
-        sys.exit()
+        confirm = input(Fore.RED + "Are you sure you want to quit? (yes/no) > ").lower().strip()
+        if confirm == "yes":
+            disconnect_from_discord()
+            sys.exit()
+        else:
+            return title_screen()
