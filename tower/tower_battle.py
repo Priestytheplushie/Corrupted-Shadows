@@ -163,7 +163,9 @@ def player_turn(player, enemies, mode, bonus_ap=0):
 
         if mode == "multi":
             print(Fore.WHITE + "HP: " + str(player.hp) + " | Action Points: " + str(ap))
+
             alive_enemies = [e for e in enemies if e.hp > 0]
+
             for i, enemy in enumerate(alive_enemies):
                 print(Fore.GREEN + str(i + 1) + ". " + enemy.name + " (" + str(enemy.hp) + "/" + str(enemy.max_hp) + " HP)")
         else:
