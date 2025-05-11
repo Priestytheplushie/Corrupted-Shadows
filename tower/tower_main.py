@@ -12,25 +12,25 @@ from item_factory import create_item
 from tower.tower_screens import *
 from screens import show_character_sheet
 from discord import update_presence
+import threading
 
 enemies = []
 
 def setup_next_battle(player):
-    global floor, tower_difficulty, tower_score, next_battle, enemies, next_battle
+    global floor, tower_difficulty, tower_score, next_battle, enemies
     difficulty_multipliers = {
         "easy": 0.5,
         "normal": 1.0,
         "hard": 1.5,
         "hardcore": 2
     }
-    multiplier = difficulty_multipliers.get(tower_difficulty, 1.0)  
+    multiplier = difficulty_multipliers.get(tower_difficulty, 1.0)
     max_enemies = int(floor * multiplier)
 
     # Ensure that the number of enemies is at least 2
-    max_enemies = max(2, max_enemies) 
+    max_enemies = max(2, max_enemies)
 
     amount = random.randint(2, max_enemies)
-
     amount = min(amount, 6)  # Ensure no more than 6 enemies
 
     # Randomize Enemies
@@ -46,14 +46,15 @@ def setup_next_battle(player):
         enemy_type = random.choice(enemy_types)
         enemy = enemy_type(level=floor)
         enemies = [enemy]
+        # Adjust tower score for single battle
+        tower_score = floor + enemy.level
     elif next_battle == "multi":
         for _ in range(amount):
             enemy_type = random.choice(enemy_types)
             enemy = enemy_type(level=floor)
             enemies.append(enemy)
-
-    # Calculate tower score after adding all enemies
-    tower_score = sum(enemy.level for enemy in enemies)
+        # Adjust tower score for multi battle
+        tower_score = floor + sum(enemy.level for enemy in enemies)
 
 def present_battle_info(player):
     global enemies, bonus_ap
@@ -110,19 +111,18 @@ def present_battle_info(player):
     return True  # Indicate that the player is ready for the battle
 
 
+import threading
+
 def calculate_reward(player):
     global floor, tower_difficulty, tower_score, next_battle, enemies, bonus_ap
 
-    # Update the presence to show reward calculation
-    update_presence(
-        state="Ascending the Tower",
-        details="Choosing a Reward"
-    )
+    # Initialize reroll and battle shifter attributes if not already set
     if not hasattr(player, 'reroll_used'):
         player.reroll_used = 0
     if not hasattr(player, 'battle_shifter'):
         player.battle_shifter = False
 
+    # Generate reward options
     all_items = list(tower_library.keys())
     item_choices = random.sample(all_items, 2)
 
@@ -132,6 +132,41 @@ def calculate_reward(player):
     healing_percent = random.randint(25, 50) if stat_boost_type == "Healing" else 0
     battle_shifter = random.random() < 0.33
 
+    # Determine the third reward description
+    if battle_shifter:
+        third_reward = "Battle Shifter"
+    elif stat_boost_type == "Healing":
+        third_reward = f"Healing Boost ({healing_percent}% HP)"
+    else:
+        third_reward = f"{stat_boost_type} Boost (+{stat_boost_amount})"
+
+    # Rewards to cycle through
+    rewards = [
+        f"1/3 - {item_choices[0]}",
+        f"2/3 - {item_choices[1]}",
+        f"3/3 - {third_reward}"
+    ]
+
+    # Flag to stop the Rich Presence thread
+    stop_rich_presence = threading.Event()
+
+    # Function to update Rich Presence in a separate thread
+    def update_rich_presence():
+        while not stop_rich_presence.is_set():
+            for i in range(len(rewards)):
+                if stop_rich_presence.is_set():
+                    break
+                update_presence(
+                    state=f"Tower - Floor {floor} | Reward Selection",
+                    details=rewards[i]
+                )
+                time.sleep(1.5)
+
+    # Start the Rich Presence thread
+    rich_presence_thread = threading.Thread(target=update_rich_presence)
+    rich_presence_thread.start()
+
+    # Display reward selection screen
     clear_screen()
     print(Fore.YELLOW + Style.BRIGHT + "╔" + "═" * 58 + "╗")
     print("║{:^58}║".format("TOWER REWARD SELECTION"))
@@ -160,6 +195,9 @@ def calculate_reward(player):
 
     print("╚" + "═" * 58 + "╝" + Style.RESET_ALL)
 
+    selected_reward = None
+
+    # Handle player choice
     while True:
         choice = input(Fore.CYAN + "Enter your choice (1-4): " + Style.RESET_ALL).strip()
 
@@ -167,20 +205,24 @@ def calculate_reward(player):
             item = create_item(item_choices[0])
             if item:
                 player.inventory.add_item(item)
+                selected_reward = item_choices[0]
                 print(Fore.GREEN + "You received: " + item_choices[0] + "!" + Style.RESET_ALL)
             break
         elif choice == "2":
             item = create_item(item_choices[1])
             if item:
                 player.inventory.add_item(item)
+                selected_reward = item_choices[1]
                 print(Fore.GREEN + "You received: " + item_choices[1] + "!" + Style.RESET_ALL)
             break
         elif choice == "3":
             if battle_shifter:
                 player.battle_shifter = True
+                selected_reward = "Battle Shifter"
                 print(Fore.GREEN + "You received the Battle Shifter!" + Style.RESET_ALL)
             elif stat_boost_type == "Healing":
                 heal_player_precent(player, healing_percent)
+                selected_reward = f"Healing Boost ({healing_percent}% HP)"
                 print(Fore.GREEN + f"You recovered {healing_percent}% of your max HP!" + Style.RESET_ALL)
             else:
                 if stat_boost_type == "HP":
@@ -195,6 +237,7 @@ def calculate_reward(player):
                     player.speed += stat_boost_amount
                 elif stat_boost_type == "AP":
                     bonus_ap += 1
+                selected_reward = f"{stat_boost_type} Boost (+{stat_boost_amount})"
                 print(Fore.GREEN + f"Your {stat_boost_type} increased by {stat_boost_amount}!" + Style.RESET_ALL)
             break
         elif choice == "4" and player.reroll_used == 0:
@@ -202,11 +245,21 @@ def calculate_reward(player):
             player.reroll_used += 1
             time.sleep(1)
             calculate_reward(player)
-            break
+            return  # Exit the current function after re-rolling
         elif choice == "4" and player.reroll_used > 0:
             print(Fore.RED + "You have already used your re-roll!" + Style.RESET_ALL)
         else:
             print(Fore.RED + "Invalid choice. Please select 1, 2, 3, or 4." + Style.RESET_ALL)
+
+    # Stop the Rich Presence thread
+    stop_rich_presence.set()
+    rich_presence_thread.join()
+
+    # Update Rich Presence to show the selected reward
+    update_presence(
+        state=f"Tower - Floor {floor}",
+        details=f"Selected Reward: {selected_reward}"
+    )
 
     time.sleep(2)
 

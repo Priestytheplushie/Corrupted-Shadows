@@ -1,14 +1,9 @@
 from colorama import Fore, Style
 import random
 import time
-from game_data import *
+from tower.tower_data import tower_difficulty
 from attack import calculate_attack
-
-from colorama import Fore, Style
-import random
-import time
-from game_data import *
-from attack import calculate_attack
+from tower.tower_data import bonus_ap, floor
 
 class Enemy:
     def __init__(self, name, level, hp=None, strength=None, defense=None, speed=None, intelligence=None, weapon=None, loot_table_key="none"):
@@ -18,29 +13,42 @@ class Enemy:
         self.loot_table_key = loot_table_key
         self.level = max(1, level)  # Ensure a minimum level of 1
         self.status_effects = []
-        self.hp = hp
-        self.strength = strength
-        self.defense = defense
-        self.speed = speed
-        self.intelligence = intelligence
-        self.base_hp = 10  # Default value, used if hp is not provided
-        self.base_strength = 2  # Default value, used if strength is not provided
-        self.base_defense = 1  # Default value, used if defense is not provided
-        self.base_speed = 5  # Default value, used if speed is not provided
-        self.base_intelligence = 3  # Default value, used if intelligence is not provided
+
+        # Use subclass-specific base stats if they are already set
+        if not hasattr(self, 'base_hp'):
+            self.base_hp = 10  # Default value, used if hp is not provided
+        if not hasattr(self, 'base_strength'):
+            self.base_strength = 2  # Default value, used if strength is not provided
+        if not hasattr(self, 'base_defense'):
+            self.base_defense = 1  # Default value, used if defense is not provided
+        if not hasattr(self, 'base_speed'):
+            self.base_speed = 5  # Default value, used if speed is not provided
+        if not hasattr(self, 'base_intelligence'):
+            self.base_intelligence = 3  # Default value, used if intelligence is not provided
+
         self.corrupted = False  # Default to False, can be set for corrupted enemies
 
         # If stats are not provided, use the base ones
-        if self.hp is None:
+        if hp is None:
             self.hp = max(self.base_hp * self.level, self.base_hp * 10)  # Ensure HP isn't too low
-        if self.strength is None:
+        else:
+            self.hp = hp
+        if strength is None:
             self.strength = self.base_strength * self.level
-        if self.defense is None:
+        else:
+            self.strength = strength
+        if defense is None:
             self.defense = self.base_defense * self.level
-        if self.speed is None:
+        else:
+            self.defense = defense
+        if speed is None:
             self.speed = self.base_speed + self.level
-        if self.intelligence is None:
+        else:
+            self.speed = speed
+        if intelligence is None:
             self.intelligence = self.base_intelligence + self.level
+        else:
+            self.intelligence = intelligence
 
         self.max_hp = self.hp  # Set max HP based on current HP
 
@@ -48,36 +56,28 @@ class Enemy:
         self.calculate_stats()
 
     def adjust_for_difficulty(self):
-        global difficulty
-
-        # Difficulty multipliers for level scaling
+        global tower_difficulty
+        # Difficulty multipliers for stat scaling
         difficulty_multipliers = {
-            "easy": 0.75,
-            "normal": 1.0,
-            "hard": 1.5,
-            "hardcore": 2.0
+            "Easy": 0.75,
+            "Normal": 1.0,
+            "Hard": 1.5,
+            "Hardcore": 2.0
         }
 
-        # Get the difficulty multiplier
-        multiplier = difficulty_multipliers.get(difficulty, 1.0)
-
-        # Scale base stats by the difficulty multiplier, but ensure a minimum threshold
-        self.base_hp = max(10, int(self.base_hp * multiplier))
-        self.base_strength = max(2, int(self.base_strength * multiplier))
-        self.base_defense = max(1, int(self.base_defense * multiplier))
-        self.base_speed = max(3, int(self.base_speed * multiplier))
-        self.base_intelligence = max(2, int(self.base_intelligence * multiplier))
+        # Get the difficulty multiplier from tower_difficulty
+        self.difficulty_multiplier = difficulty_multipliers.get(tower_difficulty.capitalize(), 1.0)
 
     def calculate_stats(self):
         global floor
 
-        # Scale stats based on level and floor
+        # Scale stats based on level, floor, and difficulty
         floor_multiplier = 1 + (floor * 0.1)  # Increase stats by 10% per floor
-        self.hp = max(1, int(self.base_hp * self.level * floor_multiplier))  # Ensure HP is at least 1
-        self.strength = int(self.base_strength * self.level * floor_multiplier)
-        self.defense = int(self.base_defense * self.level * floor_multiplier)
-        self.speed = int(self.base_speed + self.level * floor_multiplier)  # Speed grows linearly
-        self.intelligence = int(self.base_intelligence + self.level * floor_multiplier)  # Intelligence grows linearly
+        self.hp = max(1, int((self.base_hp + self.level) * floor_multiplier * self.difficulty_multiplier))  # Ensure HP is at least 1
+        self.strength = int((self.base_strength + self.level) * floor_multiplier * self.difficulty_multiplier)
+        self.defense = int((self.base_defense + self.level) * floor_multiplier * self.difficulty_multiplier)
+        self.speed = int((self.base_speed + self.level) * floor_multiplier * self.difficulty_multiplier)  # Speed grows linearly
+        self.intelligence = int((self.base_intelligence + self.level) * floor_multiplier * self.difficulty_multiplier)  # Intelligence grows linearly
 
         # Set max HP based on recalculated HP
         self.max_hp = self.hp

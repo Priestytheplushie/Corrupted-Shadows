@@ -9,10 +9,14 @@ from game_data import *
 from discord import connect_to_discord, update_presence, disconnect_from_discord
 
 def credits_screen():
-    try:
-        update_presence(state="In the Credits", details="Game by Priesty")
-    except Exception as e:
-        print(Fore.RED + f"Failed to update Discord Rich Presence: {e}")
+    update_presence(
+        state="Viewing Credits",
+        details="Game by Priesty, Launcher by Donut",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="priesty",
+        small_text="Game by Priesty",
+    )
 
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "=== CREDITS ===")
@@ -20,6 +24,10 @@ def credits_screen():
     animate_title(Fore.LIGHTGREEN_EX + "A Game by: ")
     time.sleep(1)
     animate_title(Fore.YELLOW + "░▒▓█ PRIESTY █▓▒░")
+    time.sleep(1)
+    animate_title(Fore.LIGHTGREEN_EX + "Launcher By:")
+    time.sleep(1)
+    animate_title(Fore.YELLOW + "░▒▓█ Donut █▓▒░")
     print("")
     time.sleep(3)
     return
@@ -95,7 +103,7 @@ def title_screen():
     global tower
     os.system('cls' if os.name == 'nt' else 'clear')
     animate_title(Fore.MAGENTA + "Corrupted Shadows")
-    print(center_text(Fore.WHITE + "v0.3.1-towerMVB"))
+    print(center_text(Fore.WHITE + "v0.4.0"))
     print(center_text(Fore.WHITE + ""))
     print(center_text("- Play -"))
     print(center_text("- Tower -"))

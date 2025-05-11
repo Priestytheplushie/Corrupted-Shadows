@@ -4,7 +4,7 @@ import random
 import os
 from screens import show_character_sheet
 from text_utils import clear_screen, typewriter, animate_title, dice_roll_animation
-from game_data import difficulty
+from game_data import difficulty, chapter, act
 from discord import update_presence
 
 def character_creation():
@@ -76,6 +76,14 @@ def character_creation():
     print("\n")
 
     player = Player(name, hp, strength, speed, intelligence, defense, money,None)
+    update_presence(
+        state="Playing Campagin",
+        details="Chapter 1 - Act 1",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="corrupted_book",  # Optional small image
+        small_text=f"{player.name} | HP: {player.hp}/{player.max_hp} | Lvl: {player.level} | Chapter {chapter} - Act {act}"  # Optional hover text
+    )
     show_character_sheet(player)
 
     return player, False

@@ -27,7 +27,7 @@ from discord import update_presence
 turn = 1
 
 def check_level_up(player):
-    player.level_up()
+    player.check_level_up()
 
 def calculate_xp(enemy, player):
     global tower_difficulty, floor, tower_score
@@ -97,13 +97,13 @@ def battle_conclusion(player, enemies, mode):
     print("")
     print(center_text(Fore.WHITE + "Enemies Defeated: " + ", ".join(killed_enemies)))
 
-
     print(center_text(Fore.YELLOW + "Press Enter to continue..." + Fore.RESET))
 
+    # Award XP and check for level-up
     player.xp += total_xp
     check_level_up(player)
 
-    input()
+    input(Fore.YELLOW + "Press Enter to return to the game..." + Fore.RESET)
     clear_screen()
 
 def calculate_ap_bonus(player_speed, enemy_speeds):
@@ -164,11 +164,6 @@ def player_turn(player, enemies, mode, bonus_ap=0):
         if mode == "multi":
             print(Fore.WHITE + "HP: " + str(player.hp) + " | Action Points: " + str(ap))
             alive_enemies = [e for e in enemies if e.hp > 0]  # Recalculate alive enemies
-            
-            if not alive_enemies:
-                print(Fore.GREEN + "All enemies have been defeated!")
-                battle_conclusion(player, enemies, mode="multi")
-                break  # End loop after conclusion (optional if battle_conclusion exits the loop)
             
             for i, enemy in enumerate(alive_enemies):
                 print(Fore.GREEN + str(i + 1) + ". " + enemy.name + " (" + str(enemy.hp) + "/" + str(enemy.max_hp) + " HP)")
@@ -421,7 +416,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
     # Update Discord Presence for the start of the battle
     update_presence(
         state="In a Battle",
-        details="Preparing for Battle"
+        details="Preparing for Battle",
+        small_image="battle",
+        small_text=f"Turn {turn} | Preparing"
     )
 
     # Battle logic
@@ -436,7 +433,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
             # Update Discord Presence for player's turn
             update_presence(
                 state="In a Battle",
-                details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}"
+                details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}",
+                small_image="battle",
+                small_text=f"Turn {turn} | {player.name}'s Turn"
             )
             player_turn(player, enemies, battle_mode, bonus_ap)
             player_went_first = True
@@ -447,7 +446,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
             # Update Discord Presence for enemy's turn
             update_presence(
                 state="In a Battle",
-                details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn"
+                details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn",
+                small_image="battle",
+                small_text=f"Turn {turn} | Enemies' Turn"
             )
             enemy_turn(player, enemies, battle_mode)
         else:
@@ -458,7 +459,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
                 # Update Discord Presence for player's turn
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}"
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
                 )
                 player_turn(player, enemies, battle_mode, bonus_ap)
                 player_went_first = True
@@ -466,7 +469,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
                 # Update Discord Presence for enemy's turn
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn"
+                    details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
                 )
                 enemy_turn(player, enemies, battle_mode)
     else:
@@ -486,7 +491,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
             # Update Discord Presence for enemy's turn
             update_presence(
                 state="In a Battle",
-                details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn"
+                details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn",
+                small_image="battle",
+                small_text=f"Turn {turn} | Enemies' Turn"
             )
             enemy_turn(player, enemies, battle_mode)
         elif enemies[0].speed < player.speed:
@@ -496,7 +503,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
             # Update Discord Presence for player's turn
             update_presence(
                 state="In a Battle",
-                details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}"
+                details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}",
+                small_image="battle",
+                small_text=f"Turn {turn} | {player.name}'s Turn"
             )
             player_turn(player, enemies, battle_mode, bonus_ap)
             player_went_first = True
@@ -508,7 +517,9 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
                 # Update Discord Presence for player's turn
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}"
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
                 )
                 player_turn(player, enemies, battle_mode, bonus_ap)
                 player_went_first = True
@@ -516,12 +527,15 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
                 # Update Discord Presence for enemy's turn
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn"
+                    details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
                 )
                 enemy_turn(player, enemies, battle_mode)
 
-    if player_went_first and any(e.hp > 0 for e in enemies):
-        enemy_turn(player, enemies, battle_mode)
+    # Ensure the enemy does not attack twice if they went first
+    if not player_went_first and any(e.hp > 0 for e in enemies):
+        player_turn(player, enemies, battle_mode, bonus_ap)
 
     # Main battle loop
     while player.hp > 0 and any(enemy.hp > 0 for enemy in enemies):
@@ -533,29 +547,36 @@ def battle(player, enemies, battle_mode="single", bonus_ap=0):
             if battle_mode == "single":
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}"
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {1 + bonus_ap}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
                 )
             else:
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}"
+                    details=f"Turn {turn} | HP: {player.hp}/{player.max_hp} | AP: {math.ceil(len(enemies) / 2)}",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | {player.name}'s Turn"
                 )
             player_turn(player, enemies, battle_mode, bonus_ap)
         else:  # Enemy's turn
             if battle_mode == "single":
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn"
+                    details=f"Turn {turn} | Enemy HP: {enemies[0].hp}/{enemies[0].max_hp} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
                 )
             else:
                 update_presence(
                     state="In a Battle",
-                    details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn"
+                    details=f"Turn {turn} | Enemies Left: {len([e for e in enemies if e.hp > 0])} | Enemy's Turn",
+                    small_image="battle",
+                    small_text=f"Turn {turn} | Enemies' Turn"
                 )
             enemy_turn(player, enemies, battle_mode)
 
     if player.hp <= 0:
-        death_screen()
         return False
     else:
         battle_conclusion(player, enemies, battle_mode)

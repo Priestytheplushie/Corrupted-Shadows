@@ -28,11 +28,19 @@ from discord import connect_to_discord, update_presence, disconnect_from_discord
 # Light Red = Strength Check
 
 def chapter_1(player):
+    global chapter, act
     # Clear 
     clear_screen()
 
     # Update Discord Status
-    update_presence("Playing Campagin", "Chapter 1 - The Corruption")
+    update_presence(
+        state="Playing Campaign",
+        details="Chapter 1 - The Corruption",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="corrupted_book",
+        small_text=f"{player.name} | HP: {player.hp}/{player.max_hp} | Lvl: {player.level} | Chapter {chapter} - Act {act}"
+    )
     
     # Title Card
     animate_title(Fore.MAGENTA+"Chapter 1 - The Corruption")
@@ -46,6 +54,7 @@ def chapter_1(player):
     potion3 = create_item("Health Potion")
 
     player.inventory.add_item(iron_sword)
+    player.equip_weapon(iron_sword,True)
 
     # 3 Health Potions
     player.inventory.add_item(potion)
@@ -62,10 +71,18 @@ def chapter_1(player):
 
     # Extras
     chapter = 1
+    act = 1
 
 def intro(player):
-    # Update Discord Status
-    update_presence("Playing Campagin", "Chapter 1 - Prelude")
+    # Update Discord Rich Presence
+    update_presence(
+        state="Playing Campaign",
+        details="Chapter 1 - Prelude",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="corrupted_book",
+        small_text=f"{player.name} | HP: {player.hp}/{player.max_hp} | Lvl: {player.level} | Chapter {chapter} - Act {act}"
+    )
     # Background
     typewriter(Fore.WHITE + "50 years after the" + Fore.MAGENTA + " Great War" + Fore.WHITE + ", the world was slowly healing")
     typewriter("from the scars of battle, but one day... everything changed.")
@@ -84,7 +101,14 @@ def intro(player):
     time.sleep(3)
     clear_screen()
     animate_title(Fore.GREEN+"Act I - The Village")
-    update_presence("Playing Campagin", "Chapter 1 Act 1")
+    update_presence(
+        state="Playing Campaign",
+        details="Chapter 1 - Act 1",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="corrupted_book",
+        small_text=f"{player.name} | HP: {player.hp}/{player.max_hp} | Lvl: {player.level} | Chapter 1 - Act 1"
+    )
     clear_screen()
     typewriter(Fore.RED+"You awaken with a shake! The skies have turned to darkness,")
     typewriter("goblins are running rampant, but something is very wrong here...")
@@ -246,8 +270,19 @@ def the_village(player):
     return "fight"
 
 def the_forest(player, village_result):
+    global act
+
+    act = 2
+    
     # Update Discord Status
-    update_presence("Playing Campagin", "Chapter 1 Act 2")
+    update_presence(
+        state="Playing Campaign",
+        details="Chapter 1 - Act 2",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="corrupted_book",
+        small_text=f"{player.name} | HP: {player.hp}/{player.max_hp} | Lvl: {player.level} | Chapter 1 - Act 2"
+    )
     # Encounter 1
     corrupted_orc = CorruptedOrc(5)
     corrupted_goblin_1 = CorruptedGoblin(2)
@@ -354,8 +389,17 @@ def the_forest(player, village_result):
         return
 
 def goblin_camp(player):
+    global act
+    act = 3
     # Update Discord Status
-    update_presence("Playing Campagin", "Chapter 1 Act 3")
+    update_presence(
+        state="Playing Campaign",
+        details="Chapter 1 - Act 3",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="corrupted_book",
+        small_text=f"{player.name} | HP: {player.hp}/{player.max_hp} | Lvl: {player.level} | Chapter 1 - Act 3"
+    )
     ap_bonus = 0
     # Regular Goblin Encounter Objects
     goblin_1 = Goblin(3)
@@ -456,8 +500,6 @@ def goblin_camp(player):
     
 
 def timed_encounter(player, ap_bonus):
-    # Update Discord Status
-    update_presence("Playing Campagin", "Chapter 1 Act 3")
     turn_count = 0
     max_turns = 5
     win_count = 0
@@ -621,7 +663,14 @@ def timed_encounter(player, ap_bonus):
 
 def ending(player, encounter_result):
     # Update Discord Status
-    update_presence("Playing Campagin", "Chapter 1 - Ending")
+    update_presence(
+        state="Playing Campaign",
+        details="Chapter 1 - Ending",
+        large_image="corrupted_shadows",
+        large_text="Corrupted Shadows",
+        small_image="corrupted_book",
+        small_text=f"{player.name} | HP: {player.hp}/{player.max_hp} | Lvl: {player.level} | Chapter 1 - Ending"
+    )
     if encounter_result == "fail":
         typewriter(Fore.WHITE + "You limp towards the exit and make it out of the forest. But")
         typewriter("as you think you're in the clear, you reach the Iron Fist, but only... it's")
