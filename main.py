@@ -22,11 +22,15 @@ try:
 except Exception as e:
     print("Discord connection failed:", e)
 
-player, is_tower_run = title_screen()
 
-if player and is_tower_run:
-    main(player)
-elif player:
-    chapter_1(player)
-else:
-    print(Fore.RED+"Character creation failed. Please try again.")
+while True:
+    player, mode = title_screen()
+
+    if player and mode == "tower":
+        main(player)
+    elif player and mode == "gauntlet":
+        continue
+    elif player:
+        chapter_1(player)
+    else:
+        print(Fore.RED+"Character creation failed. Please try again.")

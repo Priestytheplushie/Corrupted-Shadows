@@ -138,6 +138,63 @@ class OrcsMace(Weapon):
         print(Fore.CYAN + player.name + " equipped " + self.name + "!" + Style.RESET_ALL)
         print("")
 
+class AOEWeapon(Weapon):
+    def __init__(self, name, description, damage, durability):
+        super().__init__(name, description, damage, durability)
+        self.aoe = True
+        self.damage = damage
+        self.durability = durability
+        self.max_durability = durability
+        self.name = name
+        self.aoe = True
+
+    def attack(self, user, target):
+            if self.durability <= 0:
+                print(self.name + " is broken and can't be used!")
+                print("")
+                user.weapon = None
+                del self
+                return
+
+            if random.random() < 0.10:  # 10% chance to miss
+                print(Fore.YELLOW + user.name + " spins out of control at " + target.name + " and misses!" + Fore.WHITE)
+                print("")
+                time.sleep(1)
+                return
+
+            # Use the global calculate_attack method
+            total_damage = calculate_attack(
+                base_strength=user.strength,
+                weapon_damage=self.damage,
+                crit_chance=0.1,  # 10% crit chance
+                crit_multiplier=2.0,  # Critical hits deal double damage
+                attack_buff=1.0,  # No additional buffs
+                weapon_scaling=0.2,  # Weapon scaling factor
+                element_damage=0,  # No elemental damage
+                min_damage=5,  # Minimum damage
+                max_damage=100  # Maximum damage
+            )
+
+            # Apply damage to the target
+            target.hp -= total_damage
+            self.durability -= 1
+
+            # Display attack details
+            print(user.name + " attacks " + target.name + " with " + self.name + ", dealing " + str(total_damage) + " damage!")
+            if target.defense < 0:
+                print(Fore.LIGHTBLACK_EX + "(Reduced from " + str(total_damage) + " by defense)" + Fore.WHITE)
+            print("")
+            print(target.name + " remaining HP: " + str(target.hp))
+            print("")
+            time.sleep(1)
+            print(self.name + " durability: " + str(self.durability))
+            print("")
+    
+    def equip(self, player):
+        player.weapon = self
+        print(Fore.CYAN + player.name + " equipped " + self.name + "!" + Style.RESET_ALL)
+        print("")
+
 class Potion(Item):
     def __init__(self, name, description, healing_amount, quantity):
         super().__init__(name, description)
@@ -151,6 +208,8 @@ class Potion(Item):
             return
         player.hp += self.healing_amount
         self.quantity -= 1
+        if player.hp > player.max_hp:
+            player.hp = player.max_hp
         print(Fore.GREEN + player.name + " uses " + self.name + " and heals " + str(self.healing_amount) + " HP!" + Style.RESET_ALL)
 
 class UseableItem(Item): # Generic Useable Item Class to Import From

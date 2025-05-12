@@ -95,4 +95,4 @@ def create_tower_run():
     )
     time.sleep(3)
 
-    return player, True
+    return player, "tower"
