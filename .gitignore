@@ -25,3 +25,6 @@ game_icon.ico
 
 # Ignore any other specific file or folder you want (like the 'dist' folder)
 dist/
+
+# Ignore dev tools folder
+/dev_tools/
