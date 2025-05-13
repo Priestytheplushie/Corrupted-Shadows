@@ -1,12 +1,13 @@
 from items import *
 from item_data import item_library
 from tower.tower_item_data import tower_library
-from game_data import tower
-from tower.tower_items import *
+
+# Initialize an empty gauntlet library
+gauntlet_library = {}
 
 def create_item(name):
-    # First, check both libraries (tower_library and item_library)
-    data = tower_library.get(name) or item_library.get(name)
+    # First, check all libraries (gauntlet_library, tower_library, and item_library)
+    data = gauntlet_library.get(name) or tower_library.get(name) or item_library.get(name)
     
     if not data:
         print("Item not found:", name)
@@ -16,15 +17,15 @@ def create_item(name):
 
     if item_type == "weapon":
         return Weapon(name, data["description"], data["damage"], data["durability"])
-    if item_type == "orc_mace":
+    elif item_type == "orc_mace":
         return OrcsMace(name, data["description"], data["damage"], data["durability"])
     elif item_type == "potion":
         return Potion(name, data["description"], data["healing_amount"], data["quantity"])
-    elif item_type == "ap_potion":
-        return APPotion(name, data["description"], data["ap_amount"], data["quantity"])
-    elif item_type == "cleansing_flute": 
+    elif item_type == "cleansing_flute":
         return CleansingFlute(name, data["description"], data["uses"])
-    elif item_type == "useable_item": 
+    elif item_type == "aoe_weapon":
+        return AOEWeapon(name, data["description"], data["damage"], data["durability"])
+    elif item_type == "useable_item":
         return UseableItem(name, data["description"], data["uses"])
     elif item_type == "item":
         return Item(name, data["description"])

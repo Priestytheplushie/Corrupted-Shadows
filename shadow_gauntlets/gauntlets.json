@@ -1,0 +1,24 @@
+{
+    "gauntlets": [
+        {
+            "name": "One Man Army",
+            "module": "one_man_army",
+            "difficulty": "Easy",
+            "length": "Short (2)",
+            "description": [
+                "Battle the incoming shadow raiders in this chaotic multi-battle gauntlet!",
+                "You're a One Man Army, you are the last line of defense, you're on your own!"
+            ]
+        },
+        {
+            "name": "One on One",
+            "module": "one_on_one",
+            "difficulty": "Medium",
+            "length": "Medium (3)",
+            "description": [
+                "Face off against three elite warrior opponents in intense one-on-one duels.",
+                "Each opponent has smart AI and a unique fighting style."
+            ]
+        }
+    ]
+}

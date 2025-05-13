@@ -8,7 +8,7 @@ from item_data import *
 from text_utils import *
 
 class Player:
-    def __init__(self, name, hp, strength, speed, intelligence, defense, money, weapon=None):
+    def __init__(self, name, hp, strength, speed, intelligence, defense, money, weapon=None, level=1):
         self.name = name
         self.hp = hp
         self.strength = strength
@@ -19,7 +19,7 @@ class Player:
         self.max_hp = self.hp
         self.weapon = weapon
         self.xp = 0
-        self.level = 1
+        self.level = level
         self.status_effects = []
         self.inventory = Inventory() 
 
@@ -75,8 +75,6 @@ class Player:
 
     def equip_weapon(self, weapon,silent=False):
         self.weapon = weapon
-        if not silent:
-            print(self.weapon, "equipped.")
 
     def unequip_weapon(self):
         self.weapon = None  
